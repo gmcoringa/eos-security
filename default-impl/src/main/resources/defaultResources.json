@@ -1,0 +1,32 @@
+[
+	{
+		"name" : "Tenant",
+		"description" : "Resources for Tenant",
+		"permissions" : [
+			{
+				"permission" : "Tenant.Create",
+				"description" : "Permission for tenant creation"
+			},
+			{
+				"permission" : "Tenant.Update",
+				"description" : "Permission for tenant information update"
+			},
+			{
+				"permission" : "Tenant.Update.State",
+				"description" : "Permission for tenant state update"
+			},
+			{
+				"permission" : "Tenant.Delete",
+				"description" : "Permission for tenant deletion (purge)"
+			},
+			{
+				"permission" : "Tenant.Update.Data",
+				"description" : "Permission for tenant data update"
+			},
+			{
+				"permission" : "Tenant.View.Data",
+				"description" : "Permission for tenant data visualization"
+			}
+		]
+	},
+]

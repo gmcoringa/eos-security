@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="byYou" version="3.0">
+
+	<session-config>
+		<session-timeout>360</session-timeout>
+		<cookie-config>
+			<http-only>true</http-only>
+		</cookie-config>
+	</session-config>
+	
+	<!-- Spring Configuration -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/spring.xml</param-value>
+	</context-param>
+	<listener>
+		<listener-class>
+			org.springframework.web.context.ContextLoaderListener
+		</listener-class>
+	</listener>
+
+	<!-- Rest Configuration - Auto configuration not working with resteasy -->
+	<listener>
+		<listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
+	</listener>
+	
+	<servlet>
+        <servlet-name>Resteasy</servlet-name>
+        <servlet-class>
+            org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher
+        </servlet-class>
+    	<init-param>
+            <param-name>javax.ws.rs.Application</param-name>
+            <param-value>com.eos.security.web.RestSecurityConfiguration</param-value>
+        </init-param>
+    </servlet>
+    
+	<context-param>
+		<param-name>resteasy.servlet.mapping.prefix</param-name>
+		<param-value>/api</param-value>
+	</context-param>
+	<servlet-mapping>
+		<servlet-name>Resteasy</servlet-name>
+		<url-pattern>/api/*</url-pattern>
+	</servlet-mapping>
+
+	<!-- Pipeline -->
+	<!-- 
+	<filter>
+		<description></description>
+		<display-name>RequestPipeline</display-name>
+		<filter-name>RequestPipeline</filter-name>
+		<filter-class>com.totvs.byyou.portal.impl.web.RequestPipeline</filter-class>
+		<async-supported>true</async-supported>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>RequestPipeline</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<context-param>
+		<param-name>eos.security.rest.mapping.prefix</param-name>
+		<param-value>/api</param-value>
+	</context-param>
+	 -->
+	
+	<!-- Upload / Download Servlets -->
+	<!-- 
+	<servlet>
+		<servlet-name>UploadServlet</servlet-name>
+		<servlet-class>com.eos.security.web.servlets.UploadServlet</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UploadServlet</servlet-name>
+		<url-pattern>/api/servlet/upload</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>DownloadDocumentServlet</servlet-name>
+		<servlet-class>com.eos.security.web.servlets.DownloadServlet</servlet-class>
+		<load-on-startup>3</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DownloadDocumentServlet</servlet-name>
+		<url-pattern>/api/servlet/download</url-pattern>
+	</servlet-mapping>
+	 -->
+	
+
+	<!-- REVISAR -->
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>default.html</welcome-file>
+		<welcome-file>default.htm</welcome-file>
+	</welcome-file-list>
+
+	<error-page>
+		<error-code>404</error-code>
+		<location>/erro404.html</location>
+	</error-page>
+
+	<error-page>
+		<error-code>500</error-code>
+		<location>/erro500.html</location>
+	</error-page>
+
+	<mime-mapping>
+		<extension>wsdl</extension>
+		<mime-type>text/xml</mime-type>
+	</mime-mapping>
+
+	<mime-mapping>
+		<extension>xsd</extension>
+		<mime-type>text/xml</mime-type>
+	</mime-mapping>
+
+	<mime-mapping>
+		<extension>css</extension>
+		<mime-type>text/css</mime-type>
+	</mime-mapping>
+
+	<mime-mapping>
+		<extension>js</extension>
+		<mime-type>application/javascript</mime-type>
+	</mime-mapping>
+
+<!-- 
+	<resource-ref>
+		<description>JavaMail</description>
+		<res-ref-name>mail/Session</res-ref-name>
+		<res-type>javax.mail.Session</res-type>
+		<res-auth>Container</res-auth>
+	</resource-ref>
+ -->
+ 
+</web-app>
