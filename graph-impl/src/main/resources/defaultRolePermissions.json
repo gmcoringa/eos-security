@@ -1,0 +1,26 @@
+[
+	{
+		"role" : {
+			"code" : "EOSUser",
+			"description": "Default User Role",
+			"level" : 1
+		},
+		"permissions" : [ "User.Read", "Group.Read", "Role.Read", "Tenant.Read", "Tenant.View.Data" ]
+	},
+	{
+		"role" : {
+			"code" : "EOSAnonymous",
+			"description": "Default Anonymous Role",
+			"level" : 1
+		},
+		"permissions" : [ "Tenant.Read" ]
+	},
+	{
+		"role" : {
+			"code" : "EOSAdmin",
+			"description": "Default Administrator Role",
+			"level" : 1
+		},
+		"permissions" : [ "EOS.Tenant.Permission.ALL" ]
+	}
+]

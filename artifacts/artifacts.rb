@@ -12,6 +12,8 @@ PERSISTENCE = ['org.hibernate.javax.persistence:hibernate-jpa-2.0-api:jar:1.0.1.
 
 SPRING = group('spring-core', 'spring-orm', 'spring-context', 'spring-tx', 'spring-beans', 'spring-web',
 	:under => 'org.springframework', :version => '3.2.4.RELEASE')
+SPRING_IOC = group('spring-core', 'spring-context', 'spring-beans', 'spring-web',
+	:under => 'org.springframework', :version => '3.2.4.RELEASE')
 
 SCANNOTATION = 'org.scannotation:scannotation:jar:1.0.3'
 
@@ -37,3 +39,7 @@ TEST = ['org.springframework:spring-test:jar:3.2.4.RELEASE', 'org.hsqldb:hsqldb:
 
 # Duplicate entries
 EXCLUSIONS = ['javassist:javassist:jar:3.12.1.GA', 'org.jboss.logging:jboss-logging:jar:3.1.0.CR2', 'org.slf4j:slf4j-api:jar:1.5.8', 'org.slf4j:slf4j-simple:jar:1.5.8']
+
+# NEO4J
+NEO4J = ['org.neo4j:neo4j:jar:2.1.0-M01']
+

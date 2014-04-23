@@ -52,11 +52,9 @@ public interface EOSSecurityService {
 	public void setupSession(String sessionId) throws EOSNotFoundException;
 
 	/**
-	 * Perform the user login. This service also loads the
-	 * {@link SessionContext}.
+	 * Perform the user login. This service also loads the {@link SessionContext}.
 	 * <p>
-	 * First try to find the user by login, if not found, try to find by any of
-	 * his e-mails.
+	 * First try to find the user by login, if not found, try to find by any of his e-mails.
 	 * </p>
 	 * 
 	 * @param login
@@ -96,29 +94,26 @@ public interface EOSSecurityService {
 	public void checkLogged() throws EOSUnauthorizedException;
 
 	/**
-	 * Impersonate the given user, so all subsequent calls use the given user as
-	 * the logged one. Only system users can be impersonated.
+	 * Impersonate the given user, so all subsequent calls use the given user as the logged one. Only system users can
+	 * be impersonated.
 	 * 
 	 * @param login
 	 *            Login of a system user.
 	 * @param userTenantId
 	 *            The tenant ID where to find the given user.
 	 * @param sessionTenantId
-	 *            Id of the tenant to be set. Optional, if null no changes are
-	 *            performed for tenant.
+	 *            Id of the tenant to be set. Optional, if null no changes are performed for tenant.
 	 * @throws EOSForbiddenException
 	 *             If the user is not a {@link EOSUserType#SYSTEM}.
 	 * @throws EOSNotFoundException
-	 *             If the user with the given userTenantId parameter do not
-	 *             exists, or if the tenant with sessionTenantId parameter do
-	 *             not exists.
+	 *             If the user with the given userTenantId parameter do not exists, or if the tenant with
+	 *             sessionTenantId parameter do not exists.
 	 */
 	public void impersonate(String login, Long userTenantId, Long sessionTenantId) throws EOSForbiddenException,
 			EOSNotFoundException;
 
 	/**
-	 * Restore an impersonated user, ends an impersonated session, setting back
-	 * user and tenant.
+	 * Restore an impersonated user, ends an impersonated session, setting back user and tenant.
 	 * 
 	 * @throws EOSInvalidStateException
 	 *             If no impersonated session exists.
@@ -126,15 +121,14 @@ public interface EOSSecurityService {
 	public void deImpersonate() throws EOSInvalidStateException;
 
 	/**
-	 * Verify if the logged user has any the given permissions. Calling this
-	 * method is the same as checkPermissions(true, true, String...).
+	 * Verify if the logged user has any the given permissions. Calling this method is the same as
+	 * checkPermissions(true, true, String...).
 	 * 
 	 * @see EOSSecurityService#checkPermissions(boolean, boolean, String...).
 	 * @param permissions
 	 *            List of permissions to be checked.
 	 * @throws EOSForbiddenException
-	 *             If the user do not have any of the given permissions or any
-	 *             of the hierarchical permissions.
+	 *             If the user do not have any of the given permissions or any of the hierarchical permissions.
 	 * @throws EOSUnauthorizedException
 	 *             If the user is not logged.
 	 */
@@ -143,13 +137,11 @@ public interface EOSSecurityService {
 	/**
 	 * Performs the following validations:
 	 * <ul>
-	 * <li>Check if the user has any of the given permissions, if not throws
-	 * EOSForbiddenException.</li>
-	 * <li>If the parameter verifyLoggedUser is true, checks if the user is
-	 * logged, if not throws EOSUnauthorizedException.</li>
-	 * <li>If the parameter verifyHierarchical, before validate permissions,
-	 * verify if the user has tenant administration permission or super
-	 * administrator permission.</li>
+	 * <li>Check if the user has any of the given permissions, if not throws EOSForbiddenException.</li>
+	 * <li>If the parameter verifyLoggedUser is true, checks if the user is logged, if not throws
+	 * EOSUnauthorizedException.</li>
+	 * <li>If the parameter verifyHierarchical, before validate permissions, verify if the user has tenant
+	 * administration permission or super administrator permission.</li>
 	 * <ul>
 	 * 
 	 * <p>
@@ -164,17 +156,22 @@ public interface EOSSecurityService {
 	 * @param verifyLoggedUser
 	 *            Verify if the user is logged.
 	 * @param verifyHierarchical
-	 *            Verify hierarchical permissions, as tenant administrator and
-	 *            super administrator.
+	 *            Verify hierarchical permissions, as tenant administrator and super administrator.
 	 * @param permissions
 	 *            List of permissions to be checked.
 	 * @throws EOSForbiddenException
-	 *             If the user do not have any of the given permissions or any
-	 *             of the hierarchical permissions.
+	 *             If the user do not have any of the given permissions or any of the hierarchical permissions.
 	 * @throws EOSUnauthorizedException
 	 *             If the user is not logged.
 	 */
 	public void checkPermissions(boolean verifyLoggedUser, boolean verifyHierarchical, String... permissions)
 			throws EOSForbiddenException, EOSUnauthorizedException;
+
+	/**
+	 * Retrieve the transaction manager for the current context. The transaction manager is a thread safe object.
+	 * 
+	 * @return The transaction manager for the current context.
+	 */
+	public TransactionManager transactionManager();
 
 }

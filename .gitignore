@@ -1,0 +1,12 @@
+# EOS-Security
+target/
+.settings/
+.classpath
+.project
+reports/
+bin/
+.metadata/
+
+# Vim ignore files
+*.swp
+

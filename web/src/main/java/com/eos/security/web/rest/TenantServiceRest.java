@@ -66,80 +66,80 @@ public class TenantServiceRest {
 		return tenant;
 	}
 
-	@Path("/{tenantId}")
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public EOSTenant findTenant(@PathParam("tenant") Long tenantId) throws EOSNotFoundException {
-		EOSTenant tenant = svcTenant.findTenant(tenantId);
-
-		if (tenant == null) {
-			throw new EOSNotFoundException("Tenant not found");
-		}
-
-		return tenant;
-	}
-
-	@Path("/list")
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<EOSTenant> listTenants(@QueryParam("state") List<EOSState> states,
-			@QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("0") int offset) {
-		return svcTenant.listTenants(states, limit, offset);
-	}
-
-	@Path("/{tenantId}")
-	@PUT
-	@Consumes(MediaType.APPLICATION_JSON)
-	public void updateTenant(@PathParam("tenant") Long tenantId, EOSTenant tenant) throws EOSForbiddenException,
-			EOSUnauthorizedException, EOSValidationException, EOSNotFoundException {
-		tenant.setId(tenantId);
-		svcTenant.updateTenant(tenant);
-	}
-
-	@Path("/{tenantId}/active")
-	@PUT
-	public void activeTenant(@PathParam("tenant") Long tenantId) throws EOSForbiddenException,
-			EOSUnauthorizedException, EOSNotFoundException {
-		svcTenant.updateTenantState(tenantId, EOSState.ACTIVE);
-	}
-
-	@Path("/{tenantId}")
-	@DELETE
-	public void disableTenant(@PathParam("tenant") Long tenantId) throws EOSForbiddenException,
-			EOSUnauthorizedException, EOSNotFoundException {
-		svcTenant.updateTenantState(tenantId, EOSState.DISABLED);
-	}
-
-	@Path("/{tenantId}/purge")
-	@DELETE
-	public void purgeTenant(@PathParam("tenant") Long tenantId) throws EOSForbiddenException, EOSUnauthorizedException {
-		svcTenant.purgeTenant(tenantId);
-	}
-
-	// TENANT DATA
-
-	@Path("/{tenantId}/data")
-	@PUT
-	@Consumes(MediaType.APPLICATION_JSON)
-	public void updateTenantData(@PathParam("tenantId") Long tenantId, Map<String, String> data)
-			throws EOSForbiddenException, EOSUnauthorizedException {
-		svcTenant.updateTenantData(tenantId, data);
-	}
-
-	@Path("/{tenantId}/data")
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public Map<String, String> listTenantData(@PathParam("tenantId") Long tenantId,
-			@QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("0") int offset)
-			throws EOSForbiddenException, EOSUnauthorizedException {
-		return svcTenant.listTenantData(tenantId, limit, offset);
-	}
-
-	@Path("/{tenantId}/data/find")
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public Map<String, String> listTenantData(@PathParam("tenantId") Long tenantId, @QueryParam("key") List<String> keys)
-			throws EOSForbiddenException, EOSUnauthorizedException {
-		return svcTenant.listTenantData(tenantId, keys);
-	}
+//	@Path("/{tenantId}")
+//	@GET
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public EOSTenant findTenant(@PathParam("tenant") Long tenantId) throws EOSNotFoundException {
+//		EOSTenant tenant = svcTenant.findTenant(tenantId);
+//
+//		if (tenant == null) {
+//			throw new EOSNotFoundException("Tenant not found");
+//		}
+//
+//		return tenant;
+//	}
+//
+//	@Path("/list")
+//	@GET
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public List<EOSTenant> listTenants(@QueryParam("state") List<EOSState> states,
+//			@QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("0") int offset) {
+//		return svcTenant.listTenants(states, limit, offset);
+//	}
+//
+//	@Path("/{tenantId}")
+//	@PUT
+//	@Consumes(MediaType.APPLICATION_JSON)
+//	public void updateTenant(@PathParam("tenant") Long tenantId, EOSTenant tenant) throws EOSForbiddenException,
+//			EOSUnauthorizedException, EOSValidationException, EOSNotFoundException {
+//		tenant.setId(tenantId);
+//		svcTenant.updateTenant(tenant);
+//	}
+//
+//	@Path("/{tenantId}/active")
+//	@PUT
+//	public void activeTenant(@PathParam("tenant") Long tenantId) throws EOSForbiddenException,
+//			EOSUnauthorizedException, EOSNotFoundException {
+//		svcTenant.updateTenantState(tenantId, EOSState.ACTIVE);
+//	}
+//
+//	@Path("/{tenantId}")
+//	@DELETE
+//	public void disableTenant(@PathParam("tenant") Long tenantId) throws EOSForbiddenException,
+//			EOSUnauthorizedException, EOSNotFoundException {
+//		svcTenant.updateTenantState(tenantId, EOSState.DISABLED);
+//	}
+//
+//	@Path("/{tenantId}/purge")
+//	@DELETE
+//	public void purgeTenant(@PathParam("tenant") Long tenantId) throws EOSForbiddenException, EOSUnauthorizedException {
+//		svcTenant.purgeTenant(tenantId);
+//	}
+//
+//	// TENANT DATA
+//
+//	@Path("/{tenantId}/data")
+//	@PUT
+//	@Consumes(MediaType.APPLICATION_JSON)
+//	public void updateTenantData(@PathParam("tenantId") Long tenantId, Map<String, String> data)
+//			throws EOSForbiddenException, EOSUnauthorizedException {
+//		svcTenant.updateTenantData(tenantId, data);
+//	}
+//
+//	@Path("/{tenantId}/data")
+//	@GET
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public Map<String, String> listTenantData(@PathParam("tenantId") Long tenantId,
+//			@QueryParam("limit") @DefaultValue("20") int limit, @QueryParam("offset") @DefaultValue("0") int offset)
+//			throws EOSForbiddenException, EOSUnauthorizedException {
+//		return svcTenant.listTenantData(tenantId, limit, offset);
+//	}
+//
+//	@Path("/{tenantId}/data/find")
+//	@GET
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public Map<String, String> listTenantData(@PathParam("tenantId") Long tenantId, @QueryParam("key") List<String> keys)
+//			throws EOSForbiddenException, EOSUnauthorizedException {
+//		return svcTenant.listTenantData(tenantId, keys);
+//	}
 }

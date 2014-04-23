@@ -27,7 +27,6 @@ public class EOSUser implements Serializable {
 	private EOSState state;
 	private EOSUserType type;
 	private Long tenantId;
-	private EOSImagePaths photos;
 
 	/**
 	 * Default constructor.
@@ -197,22 +196,6 @@ public class EOSUser implements Serializable {
 	}
 
 	/**
-	 * @return the photos
-	 */
-	public EOSImagePaths getPhotos() {
-		return photos;
-	}
-
-	/**
-	 * @param photos
-	 *            the photos to set
-	 */
-	public EOSUser setPhotos(EOSImagePaths photos) {
-		this.photos = photos;
-		return this;
-	}
-
-	/**
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -221,8 +204,7 @@ public class EOSUser implements Serializable {
 		int result = 1;
 		result = prime * result + ((email == null) ? 0 : email.hashCode());
 		result = prime * result + ((login == null) ? 0 : login.hashCode());
-		result = prime * result
-				+ ((tenantId == null) ? 0 : tenantId.hashCode());
+		result = prime * result + ((tenantId == null) ? 0 : tenantId.hashCode());
 		return result;
 	}
 
@@ -261,11 +243,9 @@ public class EOSUser implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "EOSUser [login=" + login + ", url=" + url + ", nickName="
-				+ nickName + ", firstName=" + firstName + ", lastName="
-				+ lastName + ", personalMail=" + personalMail + ", email="
-				+ email + ", state=" + state + ", type=" + type + ", tenantId="
-				+ tenantId + "]";
+		return "EOSUser [login=" + login + ", url=" + url + ", nickName=" + nickName + ", firstName=" + firstName
+				+ ", lastName=" + lastName + ", personalMail=" + personalMail + ", email=" + email + ", state=" + state
+				+ ", type=" + type + ", tenantId=" + tenantId + "]";
 	}
 
 }

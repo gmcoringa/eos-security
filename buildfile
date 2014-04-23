@@ -30,21 +30,28 @@ define 'eos-security' do
 		package :jar
 	end
 
-	desc 'Security Default Implementation'
-	define 'default-impl' do
-		compile.with PERSISTENCE, SPRING, projects('api', 'common-jpa', 'common-util'), SLF4J, COMMONS_CODEC, JSON_PROVIDER
-		test.with PERSISTENCE, transitive(SPRING), projects('api', 'common-util', 'common-jpa'), SLF4J, TEST, HIBERNATE, LOG4J, transitive(JSON_PROVIDER)
+#	desc 'Security Default Implementation'
+#	define 'default-impl' do
+#		compile.with PERSISTENCE, SPRING, projects('api', 'common-jpa', 'common-util'), SLF4J, COMMONS_CODEC, JSON_PROVIDER
+#		test.with PERSISTENCE, transitive(SPRING), projects('api', 'common-util', 'common-jpa'), SLF4J, TEST, HIBERNATE, LOG4J, transitive(JSON_PROVIDER)
+#		package :jar
+#	end
+
+	desc 'Security Graph Implementation'
+	define 'graph-impl' do
+		compile.with transitive(NEO4J), SPRING_IOC, projects('api', 'common-util'), SLF4J, COMMONS_CODEC, JSON_PROVIDER 
+		test.with transitive(SPRING_IOC), projects('api', 'common-util'), SLF4J, TEST, LOG4J, transitive(JSON_PROVIDER), transitive(NEO4J)
 		package :jar
 	end
 
-	desc 'Security Web API'
-	define 'web' do
-		compile.with project('api'), projects('api', 'common-util'), REST, SPRING, SLF4J, SCANNOTATION
-		package(:war).with :libs => projects('api', 'default-impl')
-		package(:war).libs += artifacts(REST, REST_IMPL, HIBERNATE, LOG4J, SCANNOTATION, transitive(SPRING))
-		package(:war).libs += project('default-impl').compile.dependencies
-		package(:war).libs -= artifacts(EXCLUSIONS)
-	end
+#	desc 'Security Web API'
+#	define 'web' do
+#		compile.with project('api'), projects('api', 'common-util'), REST, SPRING, SLF4J, SCANNOTATION
+#		package(:war).with :libs => projects('api', 'graph-impl')
+#		package(:war).libs += artifacts(REST, REST_IMPL, HIBERNATE, LOG4J, SCANNOTATION, transitive(SPRING))
+#		package(:war).libs += project('default-impl').compile.dependencies
+#		package(:war).libs -= artifacts(EXCLUSIONS)
+#	end
 		
 end
 

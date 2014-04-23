@@ -16,11 +16,10 @@ import com.eos.common.EOSState;
 public class EOSTenant implements Serializable {
 
 	private static final long serialVersionUID = -8523729550013969250L;
-	private Long id;
+	private String alias;
 	private String name;
 	private String description;
 	private EOSState state;
-	private EOSImagePaths logos;
 
 	/**
 	 * Default constructor.
@@ -30,18 +29,18 @@ public class EOSTenant implements Serializable {
 	}
 
 	/**
-	 * @return the id
+	 * @return the alias
 	 */
-	public Long getId() {
-		return id;
+	public String getAlias() {
+		return alias;
 	}
 
 	/**
-	 * @param id
-	 *            the id to set
+	 * @param alias
+	 *            the alias to set
 	 */
-	public EOSTenant setId(Long id) {
-		this.id = id;
+	public EOSTenant setAlias(String alias) {
+		this.alias = alias;
 		return this;
 	}
 
@@ -94,29 +93,13 @@ public class EOSTenant implements Serializable {
 	}
 
 	/**
-	 * @return the logos
-	 */
-	public EOSImagePaths getLogos() {
-		return logos;
-	}
-
-	/**
-	 * @param logos
-	 *            the logos to set
-	 */
-	public EOSTenant setLogos(EOSImagePaths logos) {
-		this.logos = logos;
-		return this;
-	}
-
-	/**
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((alias == null) ? 0 : alias.hashCode());
 		return result;
 	}
 
@@ -132,10 +115,10 @@ public class EOSTenant implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		EOSTenant other = (EOSTenant) obj;
-		if (id == null) {
-			if (other.id != null)
+		if (alias == null) {
+			if (other.alias != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!alias.equals(other.alias))
 			return false;
 		return true;
 	}
@@ -145,8 +128,8 @@ public class EOSTenant implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "EOSTenant [id=" + id + ", name=" + name + ", description="
-				+ description + ", state=" + state + "]";
+		return "EOSTenant [alias=" + alias + ", name=" + name + ", description=" + description + ", state=" + state
+				+ "]";
 	}
 
 }
