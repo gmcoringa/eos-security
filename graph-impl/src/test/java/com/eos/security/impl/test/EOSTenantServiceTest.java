@@ -82,20 +82,22 @@ public class EOSTenantServiceTest {
 		aliases.add(svcTenant.createTenant(
 				new EOSTenant().setAlias("findtenants2").setName("Test find tenants 2")
 						.setDescription("Test find description"), null, getUser("test@find2.mail")).getAlias());
-		Collection<EOSTenant> tenants = svcTenant.findTenants(aliases);
+		Set<EOSTenant> tenants = svcTenant.findTenants(aliases);
 		Assert.assertEquals("Find tenants size", 2, tenants.size());
 	}
 
-	// @Test
-	// public void testListTenants() throws EOSException {
-	// svcTenant.createTenant(new EOSTenant().setName("Test list tenant 1").setDescription("Test list description 1"),
-	// null, getUser("test@list1.mail")).getId();
-	// svcTenant.createTenant(new EOSTenant().setName("Test list tenant 2").setDescription("Test list description 2"),
-	// null, getUser("test@list2.mail")).getId();
-	// List<EOSTenant> tenants = svcTenant.listTenants(null, 5, 0);
-	// Assert.assertTrue("List tenants higher than 1", tenants.size() > 1);
-	// }
-	//
+	@Test
+	public void testListTenants() throws EOSException {
+		Set<EOSTenant> createds = new HashSet<>(2);
+		createds.add(svcTenant.createTenant(new EOSTenant().setAlias("listTenant1").setName("Test list tenant 1")
+				.setDescription("Test list description 1"), null, getUser("test@list1.mail")));
+		createds.add(svcTenant.createTenant(new EOSTenant().setAlias("listTenant2").setName("Test list tenant 2")
+				.setDescription("Test list description 2"), null, getUser("test@list2.mail")));
+		Set<EOSTenant> tenants = svcTenant.listTenants(null, 5, 0);
+		Assert.assertTrue("List tenants higher than 1", tenants.size() > 1);
+		Assert.assertTrue("Tenants contains", tenants.containsAll(createds));
+	}
+
 	// @Test
 	// public void testUpdateTenant() throws EOSException {
 	// EOSUser admin = getUser("test@update.mail");

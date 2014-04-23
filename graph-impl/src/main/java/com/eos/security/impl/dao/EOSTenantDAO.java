@@ -62,20 +62,35 @@ public class EOSTenantDAO {
 		}
 	}
 
-	// public List<EOSTenant> listTenants(List<EOSState> states, int limit, int offset) {
-	// if (states == null || states.isEmpty()) {
-	// states = Arrays.asList(EOSState.values());
-	// }
-	// return null;
-	// // TODO limit validation
-	// // return em.createNamedQuery(EOSTenantEntity.QUERY_LIST, EOSTenantEntity.class)
-	// // .setParameter(EOSTenantEntity.PARAM_STATE, states).setFirstResult(offset).setMaxResults(limit)
-	// // .getResultList();
-	// }
-	//
-	// public void purgeTenant(Long id) {
-	// // em.createNamedQuery(EOSTenantEntity.QUERY_PURGE).setParameter("id", id).executeUpdate();
-	// }
+	public Set<EOSTenant> listTenants(Set<EOSState> states, int limit, int offset) {
+		String queryString = null;
+		Map<String, Object> params = new HashMap<>(1);
+		Set<EOSTenant> tenants = new HashSet<>(limit);
+
+		if (states == null || states.isEmpty()) {
+			queryString = "MATCH (tenant:Tenant) RETURN tenant ";
+		} else {
+			queryString = "MATCH (tenant:Tenant) WHERE tenant.state IN {states} RETURN tenant ORDER BY tenant.name ";
+			params.put("states", states);
+		}
+
+		queryString += "SKIP {skip} LIMIT {limit} ";
+		params.put("limit", limit);
+		params.put("skip", offset);
+
+		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
+				.execute(queryString, params).columnAs("tenant")) {
+			while (result.hasNext()) {
+				tenants.add(convertNode(result.next()));
+			}
+		}
+
+		return tenants;
+	}
+
+	public void purgeTenant(String alias) {
+		// em.createNamedQuery(EOSTenantEntity.QUERY_PURGE).setParameter("id", id).executeUpdate();
+	}
 
 	public Set<EOSTenant> findTenants(Set<String> aliases) {
 		String queryString = "MATCH (tenant:Tenant) WHERE tenant.alias IN {aliases} RETURN tenant ";

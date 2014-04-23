@@ -61,7 +61,7 @@ public interface EOSTenantService {
 	/**
 	 * Find all tenants that match the given alias list.
 	 * 
-	 * @param alias
+	 * @param aliases
 	 *            List of tenant aliases.
 	 * @return List of tenant found.
 	 */
@@ -82,7 +82,7 @@ public interface EOSTenantService {
 
 	/**
 	 * Updates a tenant. Only name and description are update. For state change see
-	 * {@link EOSTenantService#updateTenantState(Long, EOSState)}.
+	 * {@link EOSTenantService#updateTenantState(String, EOSState)}.
 	 * 
 	 * @param tenant
 	 *            The tenant info.

@@ -142,38 +142,34 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 	@Override
 	public EOSTenant findTenant(String tenantId) throws EOSNotFoundException {
 		// TODO cache
-		 TransactionManager manager = TransactionManagerImpl.get().begin();
-		 EOSTenant tenant = tenantDAO.find(tenantId);
-		 manager.commit();
-		 return tenant;
+		TransactionManager manager = TransactionManagerImpl.get().begin();
+		EOSTenant tenant = tenantDAO.find(tenantId);
+		manager.commit();
+		return tenant;
 	}
 
 	/**
-	 * @see com.eos.security.api.service.EOSTenantService#findTenants(java.util.List)
+	 * @see com.eos.security.api.service.EOSTenantService#findTenants(java.util.Set)
 	 */
 	@Override
 	public Set<EOSTenant> findTenants(Set<String> tenantIds) {
 		// TODO cache
-		 TransactionManager manager = TransactionManagerImpl.get().begin();
-		 Set<EOSTenant> tenants = tenantDAO.findTenants(tenantIds);
-		 manager.commit();
+		TransactionManager manager = TransactionManagerImpl.get().begin();
+		Set<EOSTenant> tenants = tenantDAO.findTenants(tenantIds);
+		manager.commit();
 		return tenants;
 	}
 
 	/**
-	 * @see com.eos.security.api.service.EOSTenantService#listTenants(java.util.List, int, int)
+	 * @see com.eos.security.api.service.EOSTenantService#listTenants(java.util.Set, int, int)
 	 */
 	@Override
 	public Set<EOSTenant> listTenants(Set<EOSState> states, int limit, int offset) {
-		// List<EOSTenantEntity> entities = tenantDAO.listTenants(states, limit, offset);
-		// List<EOSTenant> tenants = new ArrayList<>(entities.size());
-		//
-		// for (EOSTenantEntity entity : entities) {
-		// tenants.add(entityToVO(entity));
-		// }
-		//
-		// return tenants;
-		return null;
+		// TODO permission check for state != ACTIVE
+		TransactionManager manager = TransactionManagerImpl.get().begin();
+		Set<EOSTenant> tenants = tenantDAO.listTenants(states, limit, offset);
+		manager.commit();
+		return tenants;
 	}
 
 	/**
@@ -302,7 +298,7 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 	}
 
 	/**
-	 * @see com.eos.security.api.service.EOSTenantService#listTenantData(java.lang.String, java.util.List)
+	 * @see com.eos.security.api.service.EOSTenantService#listTenantData(java.lang.String, java.util.Set)
 	 */
 	@Override
 	public Map<String, String> listTenantData(String tenantId, Set<String> keys) throws EOSForbiddenException,
