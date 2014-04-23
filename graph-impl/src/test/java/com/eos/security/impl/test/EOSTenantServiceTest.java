@@ -3,7 +3,6 @@
  */
 package com.eos.security.impl.test;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,6 +22,7 @@ import com.eos.security.api.service.EOSTenantService;
 import com.eos.security.api.service.EOSUserService;
 import com.eos.security.api.vo.EOSTenant;
 import com.eos.security.api.vo.EOSUser;
+import com.eos.security.impl.test.util.EOSTestUtil;
 
 /**
  * @author santos.fabiano
@@ -98,39 +98,40 @@ public class EOSTenantServiceTest {
 		Assert.assertTrue("Tenants contains", tenants.containsAll(createds));
 	}
 
-	// @Test
-	// public void testUpdateTenant() throws EOSException {
-	// EOSUser admin = getUser("test@update.mail");
-	// Long tenantId = svcTenant.createTenant(
-	// new EOSTenant().setName("Test update tenant").setDescription("Test update tenant description"), null,
-	// admin).getId();
-	//
-	// try {
-	// EOSTestUtil.setup(context, tenantId, admin);
-	// // Perform update
-	// EOSTenant updated = new EOSTenant().setId(tenantId).setName("Test update tenant: UPDATED")
-	// .setDescription("Test update tenant description: UPDATED");
-	// svcTenant.updateTenant(updated);
-	// EOSTenant tenant = svcTenant.findTenant(tenantId);
-	//
-	// Assert.assertEquals(updated.getName(), tenant.getName());
-	// Assert.assertEquals(updated.getDescription(), tenant.getDescription());
-	// } finally {
-	// // Restore context.
-	// EOSTestUtil.setup(context);
-	// }
-	// }
-	//
-	// @Test
-	// public void testUpdateTenantState() throws EOSException {
-	// Long tenantId = svcTenant.createTenant(
-	// new EOSTenant().setName("Test update tenant state").setDescription(
-	// "Test update tenant state description"), null, getUser("test@stateup.mail")).getId();
-	// svcTenant.updateTenantState(tenantId, EOSState.DISABLED);
-	// EOSTenant tenant = svcTenant.findTenant(tenantId);
-	// Assert.assertEquals(tenant.getState(), EOSState.DISABLED);
-	// }
-	//
+	@Test
+	public void testUpdateTenant() throws EOSException {
+		EOSUser admin = getUser("test@update.mail");
+		String alias = svcTenant.createTenant(
+				new EOSTenant().setAlias("updateTenant").setName("Test update tenant")
+						.setDescription("Test update tenant description"), null, admin).getAlias();
+
+		try {
+			EOSTestUtil.setup(context, alias, admin);
+			// Perform update
+			EOSTenant updated = new EOSTenant().setAlias(alias).setName("Test update tenant: UPDATED")
+					.setDescription("Test update tenant description: UPDATED");
+			svcTenant.updateTenant(updated);
+			EOSTenant tenant = svcTenant.findTenant(alias);
+
+			Assert.assertEquals(updated.getName(), tenant.getName());
+			Assert.assertEquals(updated.getDescription(), tenant.getDescription());
+		} finally {
+			// Restore context.
+			EOSTestUtil.setup(context);
+		}
+	}
+
+	@Test
+	public void testUpdateTenantState() throws EOSException {
+		String alias = svcTenant.createTenant(
+				new EOSTenant().setAlias("updateTenantState").setName("Test update tenant state")
+						.setDescription("Test update tenant state description"), null, getUser("test@stateup.mail"))
+				.getAlias();
+		svcTenant.updateTenantState(alias, EOSState.INACTIVE);
+		EOSTenant tenant = svcTenant.findTenant(alias);
+		Assert.assertEquals(tenant.getState(), EOSState.INACTIVE);
+	}
+
 	// @Test
 	// public void testTenantPurge() {
 	// // TODO

@@ -47,7 +47,7 @@ public class EOSTestUtil {
 	public static void setup(ApplicationContext appContext) throws EOSException {
 		// Already setup, return
 		if (SessionContextManager.getCurrentTenantId() != null
-				&& SessionContextManager.getCurrentTenantId() == EOSSystemConstants.ADMIN_TENANT
+				&& SessionContextManager.getCurrentTenantId().equals(EOSSystemConstants.ADMIN_TENANT)
 				&& SessionContextManager.getCurrentUserLogin() != null
 				&& EOSSystemConstants.LOGIN_SUPER_ADMIN
 						.equals(SessionContextManager.getCurrentUserLogin())) {
@@ -55,10 +55,10 @@ public class EOSTestUtil {
 		}
 
 		final EOSUserService svcUser = appContext.getBean(EOSUserService.class);
-		EOSUser user = svcUser.findTenantUser(
-				EOSSystemConstants.LOGIN_SUPER_ADMIN,
-				EOSSystemConstants.ADMIN_TENANT);
-		setup(appContext, EOSSystemConstants.ADMIN_TENANT, user);
+//		EOSUser user = svcUser.findTenantUser(
+//				EOSSystemConstants.LOGIN_SUPER_ADMIN,
+//				EOSSystemConstants.ADMIN_TENANT);
+//		setup(appContext, EOSSystemConstants.ADMIN_TENANT, user);
 	}
 
 	/**
@@ -74,12 +74,12 @@ public class EOSTestUtil {
 	 *             If any problem occurs.
 	 */
 	public static void setup(ApplicationContext appContext,
-			final Long tenantId, final EOSUser user) throws EOSException {
+			final String alias, final EOSUser user) throws EOSException {
 		final EOSTenantService svcTenant = appContext
 				.getBean(EOSTenantService.class);
 		String sessionId = SessionContextManager.getCurrentSessionId();
 		final SessionContext context = new SessionContext(
-				svcTenant.findTenant(tenantId.toString()), user);
+				svcTenant.findTenant(alias), user);
 		final EOSSession session = EOSSession.getContext();
 
 		if (sessionId == null) {

@@ -15,6 +15,7 @@ import org.neo4j.graphdb.ResourceIterator;
 import org.springframework.stereotype.Repository;
 
 import com.eos.common.EOSState;
+import com.eos.common.util.StringUtil;
 import com.eos.security.api.vo.EOSTenant;
 import com.eos.security.impl.service.internal.TransactionManagerImpl;
 
@@ -29,21 +30,19 @@ public class EOSTenantDAO {
 	private static final String QUERY_CREATE = "MERGE (n:Tenant {alias: {alias}, name: {name}, description: {description}, "
 			+ "state: {state}}) RETURN n";
 	private static final String QUERY_FIND = "MATCH (tenant:Tenant{alias : {alias}}) RETURN tenant ";
+	private static final String QUERY_UPDATE = "MATCH (tenant:Tenant{alias : {alias}}) SET tenant.name = {name}, "
+			+ "tenant.description = {description} RETURN tenant ";
+	private static final String QUERY_UPDATE_STATE = "MATCH (tenant:Tenant{alias : {alias}}) SET tenant.state = {state} RETURN tenant ";
 	private static final String QUERY_FIND_BY_ALIASES = "MATCH (tenant:Tenant) WHERE tenant.alias IN {aliases} RETURN tenant ";
 	private static final String QUERY_LIST = "MATCH (tenant:Tenant) RETURN tenant SKIP {skip} LIMIT {limit} ";
-	private static final String QUERY_LIST_BY_STATE = "MATCH (tenant:Tenant) WHERE tenant.state IN {states} RETURN tenant ORDER BY tenant.name SKIP {skip} LIMIT {limit} ";
+	private static final String QUERY_LIST_BY_STATE = "MATCH (tenant:Tenant) WHERE tenant.state IN {states} RETURN tenant "
+			+ "ORDER BY tenant.name SKIP {skip} LIMIT {limit} ";
 	private static final String QUERY_PURGE = "MATCH (tenant { alias: {alias} })-[r]-() DELETE tenant, r";
 
 	public EOSTenant create(EOSTenant tenant) {
 
-		Map<String, Object> params = new HashMap<>(4);
-		params.put("alias", tenant.getAlias());
-		params.put("name", tenant.getName());
-		params.put("description", tenant.getName());
-		params.put("state", tenant.getState().name());
-
 		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
-				.execute(QUERY_CREATE, params).columnAs("n")) {
+				.execute(QUERY_CREATE, tenantAsMap(tenant)).columnAs("n")) {
 			if (result.hasNext()) {
 				return convertNode(result.next());
 			} else {
@@ -54,12 +53,42 @@ public class EOSTenantDAO {
 
 	public EOSTenant find(String alias) {
 
-		String queryString = QUERY_FIND;
 		Map<String, Object> params = new HashMap<>(1);
 		params.put("alias", alias);
 
 		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
-				.execute(queryString, params).columnAs("tenant")) {
+				.execute(QUERY_FIND, params).columnAs("tenant")) {
+			if (result.hasNext()) {
+				return convertNode(result.next());
+			} else {
+				return null;
+			}
+		}
+	}
+
+	public EOSTenant update(EOSTenant tenant) {
+		Map<String, Object> params = new HashMap<>(3);
+		params.put("alias", tenant.getAlias());
+		params.put("name", tenant.getName());
+		params.put("description", tenant.getDescription());
+
+		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
+				.execute(QUERY_UPDATE, params).columnAs("tenant")) {
+			if (result.hasNext()) {
+				return convertNode(result.next());
+			} else {
+				return null;
+			}
+		}
+	}
+
+	public EOSTenant update(String alias, EOSState state) {
+		Map<String, Object> params = new HashMap<>(2);
+		params.put("alias", alias);
+		params.put("state", state.name());
+
+		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
+				.execute(QUERY_UPDATE_STATE, params).columnAs("tenant")) {
 			if (result.hasNext()) {
 				return convertNode(result.next());
 			} else {
@@ -115,7 +144,7 @@ public class EOSTenantDAO {
 	}
 
 	// ################################
-	// # Utilities 
+	// # Utilities
 	// ###############################
 
 	private EOSTenant convertNode(Node node) {
@@ -124,5 +153,27 @@ public class EOSTenantDAO {
 				.setDescription((String) node.getProperty("description"))
 				.setState(EOSState.valueOf((String) node.getProperty("state")));
 		return tenant;
+	}
+
+	private Map<String, Object> tenantAsMap(EOSTenant tenant) {
+		Map<String, Object> props = new HashMap<>(4);
+
+		if (!StringUtil.isEmpty(tenant.getAlias())) {
+			props.put("alias", tenant.getAlias());
+		}
+
+		if (!StringUtil.isEmpty(tenant.getName())) {
+			props.put("name", tenant.getName());
+		}
+
+		if (!StringUtil.isEmpty(tenant.getDescription())) {
+			props.put("description", tenant.getDescription());
+		}
+
+		if (tenant.getState() != null) {
+			props.put("state", tenant.getState().name());
+		}
+
+		return props;
 	}
 }

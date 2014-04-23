@@ -178,7 +178,7 @@ public class EOSUserServiceTest {
 		svcUser.setUserPassword(user.getLogin(), null, password);
 
 		try {
-			EOSTestUtil.setup(context, user.getTenantId(), user);
+//			EOSTestUtil.setup(context, user.getTenantId(), user);
 			svcUser.setUserPassword(user.getLogin(), password, "newPassword");
 		} catch (EOSForbiddenException | EOSUnauthorizedException | EOSValidationException e) {
 			Assert.fail("Logged user change password failed: " + e.getMessage());

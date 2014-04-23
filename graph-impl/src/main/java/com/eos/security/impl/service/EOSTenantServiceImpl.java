@@ -180,13 +180,11 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 			EOSValidationException, EOSNotFoundException {
 		EOSValidator.validateTenant(tenant);
 		// checkTenantPermission(tenant.getId(), "Tenant.Update");
-		// // DO a find, then update, so hibernate listeners are fired.
-		// EOSTenantEntity entity = tenantDAO.find(tenant.getId());
-		//
-		// entity.setName(tenant.getName());
-		// entity.setDescription(tenant.getDescription());
-		// tenantDAO.merge(entity);
-		// log.debug("Tenant updated: " + tenant.toString());
+
+		TransactionManager manager = TransactionManagerImpl.get().begin();
+		tenantDAO.update(tenant);
+		manager.commit();
+		log.debug("Tenant updated: " + tenant.toString());
 		// TODO messaging
 	}
 
@@ -194,15 +192,13 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 	 * @see com.eos.security.api.service.EOSTenantService#updateTenantState(java.lang.String, com.eos.common.EOSState)
 	 */
 	@Override
-	public void updateTenantState(String tenantId, EOSState state) throws EOSForbiddenException,
-			EOSUnauthorizedException, EOSNotFoundException {
-		// DO a find, then update, so hibernate listeners are fired.
-		// EOSTenantEntity entity = tenantDAO.find(tenantId);
+	public void updateTenantState(String alias, EOSState state) throws EOSForbiddenException, EOSUnauthorizedException,
+			EOSNotFoundException {
 		// svcSecurity.checkPermissions(true, false, "Tenant.Update.State");
-		//
-		// entity.setState(state);
-		// tenantDAO.merge(entity);
-		// log.debug("Tenant state updated to " + state.name());
+		TransactionManager manager = TransactionManagerImpl.get().begin();
+		tenantDAO.update(alias, state);
+		manager.commit();
+		log.debug("Tenant state updated to " + state.name());
 		// TODO messaging
 	}
 
