@@ -26,10 +26,16 @@ import com.eos.security.impl.service.internal.TransactionManagerImpl;
 public class EOSTenantDAO {
 	public static final Label label = DynamicLabel.label("Tenant");
 
+	private static final String QUERY_CREATE = "MERGE (n:Tenant {alias: {alias}, name: {name}, description: {description}, "
+			+ "state: {state}}) RETURN n";
+	private static final String QUERY_FIND = "MATCH (tenant:Tenant{alias : {alias}}) RETURN tenant ";
+	private static final String QUERY_FIND_BY_ALIASES = "MATCH (tenant:Tenant) WHERE tenant.alias IN {aliases} RETURN tenant ";
+	private static final String QUERY_LIST = "MATCH (tenant:Tenant) RETURN tenant SKIP {skip} LIMIT {limit} ";
+	private static final String QUERY_LIST_BY_STATE = "MATCH (tenant:Tenant) WHERE tenant.state IN {states} RETURN tenant ORDER BY tenant.name SKIP {skip} LIMIT {limit} ";
+	private static final String QUERY_PURGE = "MATCH (tenant { alias: {alias} })-[r]-() DELETE tenant, r";
+
 	public EOSTenant create(EOSTenant tenant) {
 
-		String queryString = "MERGE (n:Tenant {alias: {alias}, name: {name}, description: {description}, "
-				+ "state: {state}}) RETURN n";
 		Map<String, Object> params = new HashMap<>(4);
 		params.put("alias", tenant.getAlias());
 		params.put("name", tenant.getName());
@@ -37,7 +43,7 @@ public class EOSTenantDAO {
 		params.put("state", tenant.getState().name());
 
 		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
-				.execute(queryString, params).columnAs("n")) {
+				.execute(QUERY_CREATE, params).columnAs("n")) {
 			if (result.hasNext()) {
 				return convertNode(result.next());
 			} else {
@@ -48,7 +54,7 @@ public class EOSTenantDAO {
 
 	public EOSTenant find(String alias) {
 
-		String queryString = "MATCH (tenant:Tenant{alias : {alias}}) RETURN tenant ";
+		String queryString = QUERY_FIND;
 		Map<String, Object> params = new HashMap<>(1);
 		params.put("alias", alias);
 
@@ -63,23 +69,22 @@ public class EOSTenantDAO {
 	}
 
 	public Set<EOSTenant> listTenants(Set<EOSState> states, int limit, int offset) {
-		String queryString = null;
-		Map<String, Object> params = new HashMap<>(1);
+		String query = null;
+		Map<String, Object> params = new HashMap<>(3);
 		Set<EOSTenant> tenants = new HashSet<>(limit);
 
 		if (states == null || states.isEmpty()) {
-			queryString = "MATCH (tenant:Tenant) RETURN tenant ";
+			query = QUERY_LIST;
 		} else {
-			queryString = "MATCH (tenant:Tenant) WHERE tenant.state IN {states} RETURN tenant ORDER BY tenant.name ";
+			query = QUERY_LIST_BY_STATE;
 			params.put("states", states);
 		}
 
-		queryString += "SKIP {skip} LIMIT {limit} ";
 		params.put("limit", limit);
 		params.put("skip", offset);
 
 		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
-				.execute(queryString, params).columnAs("tenant")) {
+				.execute(query, params).columnAs("tenant")) {
 			while (result.hasNext()) {
 				tenants.add(convertNode(result.next()));
 			}
@@ -89,23 +94,29 @@ public class EOSTenantDAO {
 	}
 
 	public void purgeTenant(String alias) {
-		// em.createNamedQuery(EOSTenantEntity.QUERY_PURGE).setParameter("id", id).executeUpdate();
+		Map<String, Object> params = new HashMap<>(1);
+		params.put("alias", alias);
+		TransactionManagerImpl.transactionManager().executionEngine().execute(QUERY_PURGE, params);
 	}
 
 	public Set<EOSTenant> findTenants(Set<String> aliases) {
-		String queryString = "MATCH (tenant:Tenant) WHERE tenant.alias IN {aliases} RETURN tenant ";
 		Map<String, Object> params = new HashMap<>(1);
 		params.put("aliases", aliases);
 		Set<EOSTenant> tenants = new HashSet<>(aliases.size());
 
 		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
-				.execute(queryString, params).columnAs("tenant")) {
+				.execute(QUERY_FIND_BY_ALIASES, params).columnAs("tenant")) {
 			while (result.hasNext()) {
 				tenants.add(convertNode(result.next()));
 			}
 		}
+
 		return tenants;
 	}
+
+	// ################################
+	// # Utilities 
+	// ###############################
 
 	private EOSTenant convertNode(Node node) {
 		EOSTenant tenant = new EOSTenant();
