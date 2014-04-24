@@ -3,7 +3,9 @@
  */
 package com.eos.security.impl.test;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Assert;
@@ -17,6 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.eos.common.EOSState;
 import com.eos.common.exception.EOSException;
+import com.eos.common.exception.EOSNotFoundException;
 import com.eos.security.api.service.EOSSecurityService;
 import com.eos.security.api.service.EOSTenantService;
 import com.eos.security.api.service.EOSUserService;
@@ -132,12 +135,26 @@ public class EOSTenantServiceTest {
 		Assert.assertEquals(tenant.getState(), EOSState.INACTIVE);
 	}
 
-	// @Test
-	// public void testTenantPurge() {
-	// // TODO
-	// Assert.assertTrue("TODO pruge tests", true);
-	// }
-	//
+	@Test
+	public void testTenantPurge() throws EOSException {
+		Map<String, String> meta = new HashMap<>(2);
+		meta.put("purgeKey1", "purgeValue1");
+		meta.put("purgeKey2", "purgeValue2");
+
+		String alias = svcTenant.createTenant(
+				new EOSTenant().setAlias("purgeTenant").setName("Test purge tenant")
+						.setDescription("Test purge tenant description"), meta, getUser("test@purgetenant.mail"))
+				.getAlias();
+		svcTenant.purgeTenant(alias);
+		try {
+			EOSTenant tenant = svcTenant.findTenant(alias);
+			Assert.assertNull("Not found purged tenant", tenant);
+			Assert.fail("Tenant purged should not be found");
+		} catch (EOSNotFoundException e) {
+			// Nothing, exception espected
+		}
+	}
+
 	// // Tenant Data
 	//
 	// @Test

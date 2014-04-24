@@ -140,11 +140,16 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 	 * @see com.eos.security.api.service.EOSTenantService#findTenant(java.lang.String)
 	 */
 	@Override
-	public EOSTenant findTenant(String tenantId) throws EOSNotFoundException {
+	public EOSTenant findTenant(String alias) throws EOSNotFoundException {
 		// TODO cache
 		TransactionManager manager = TransactionManagerImpl.get().begin();
-		EOSTenant tenant = tenantDAO.find(tenantId);
+		EOSTenant tenant = tenantDAO.find(alias);
 		manager.commit();
+
+		if (tenant == null) {
+			throw new EOSNotFoundException("Tenant not found, alias: " + alias);
+		}
+
 		return tenant;
 	}
 
@@ -152,10 +157,10 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 	 * @see com.eos.security.api.service.EOSTenantService#findTenants(java.util.Set)
 	 */
 	@Override
-	public Set<EOSTenant> findTenants(Set<String> tenantIds) {
+	public Set<EOSTenant> findTenants(Set<String> aliases) {
 		// TODO cache
 		TransactionManager manager = TransactionManagerImpl.get().begin();
-		Set<EOSTenant> tenants = tenantDAO.findTenants(tenantIds);
+		Set<EOSTenant> tenants = tenantDAO.findTenants(aliases);
 		manager.commit();
 		return tenants;
 	}
@@ -206,10 +211,12 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 	 * @see com.eos.security.api.service.EOSTenantService#purgeTenant(java.lang.String)
 	 */
 	@Override
-	public void purgeTenant(String tenantId) throws EOSForbiddenException, EOSUnauthorizedException {
-		svcSecurity.checkPermissions(true, false, "Tenant.Delete");
-		// TODO Auto-generated method stub
-
+	public void purgeTenant(String alias) throws EOSForbiddenException, EOSUnauthorizedException {
+		// svcSecurity.checkPermissions(true, false, "Tenant.Delete");
+		TransactionManager manager = TransactionManagerImpl.get().begin();
+		tenantDAO.purgeTenant(alias);
+		manager.commit();
+		log.info("Tenant purged :" + alias);
 	}
 
 	// #################

@@ -12,19 +12,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class EOSTenantDataDAO  {
 
-//	@PersistenceContext
-//	private EntityManager em;
-//
-//	public EOSTenantDataDAO() {
-//		super(EOSTenantDataEntity.class);
-//	}
-//
-//	@Override
-//	public EntityManager getEntityManager() {
-//		return em;
-//	}
-//
-//	@Transactional
 //	public void updateTenantData(Long tenantId, String key, String value) {
 //		em.createNamedQuery(EOSTenantDataEntity.QUERY_UPDATE)
 //				.setParameter(EOSTenantDataEntity.PARAM_TENANT, tenantId)
@@ -33,7 +20,6 @@ public class EOSTenantDataDAO  {
 //				.executeUpdate();
 //	}
 //
-//	@Transactional
 //	public void deleteTenantData(Long tenantId, List<String> keys) {
 //		em.createNamedQuery(EOSTenantDataEntity.QUERY_DELETE_KEYS)
 //				.setParameter(EOSTenantDataEntity.PARAM_TENANT, tenantId)
@@ -41,7 +27,6 @@ public class EOSTenantDataDAO  {
 //				.executeUpdate();
 //	}
 //
-//	@Transactional(readOnly = true)
 //	public String findTenantDataValue(Long tenantId, String key) {
 //		try {
 //			return em
@@ -55,7 +40,6 @@ public class EOSTenantDataDAO  {
 //		}
 //	}
 //
-//	@Transactional(readOnly = true)
 //	public List<EOSTenantDataEntity> findTenantDataValues(Long tenantId,
 //			List<String> keys) {
 //		return em
@@ -66,7 +50,6 @@ public class EOSTenantDataDAO  {
 //				.getResultList();
 //	}
 //
-//	@Transactional(readOnly = true)
 //	public List<EOSTenantDataEntity> listTenantData(Long tenantId, int limit,
 //			int offset) {
 //		return em

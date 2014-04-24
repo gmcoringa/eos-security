@@ -37,7 +37,7 @@ public class EOSTenantDAO {
 	private static final String QUERY_LIST = "MATCH (tenant:Tenant) RETURN tenant SKIP {skip} LIMIT {limit} ";
 	private static final String QUERY_LIST_BY_STATE = "MATCH (tenant:Tenant) WHERE tenant.state IN {states} RETURN tenant "
 			+ "ORDER BY tenant.name SKIP {skip} LIMIT {limit} ";
-	private static final String QUERY_PURGE = "MATCH (tenant { alias: {alias} })-[r]-() DELETE tenant, r";
+	private static final String QUERY_PURGE = "MATCH (tenant:Tenant{alias: {alias}}) OPTIONAL MATCH (tenant)-[r]-() DELETE tenant, r";
 
 	public EOSTenant create(EOSTenant tenant) {
 
