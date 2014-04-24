@@ -11,6 +11,14 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class EOSTenantDataDAO  {
+	
+	private static final String RELATION_META_NAME = "HAS_META";
+	
+	private static final String QUERY_CREATE = "";
+	
+	public void createTenantData(String alias, String key, String value){
+		
+	}
 
 //	public void updateTenantData(Long tenantId, String key, String value) {
 //		em.createNamedQuery(EOSTenantDataEntity.QUERY_UPDATE)

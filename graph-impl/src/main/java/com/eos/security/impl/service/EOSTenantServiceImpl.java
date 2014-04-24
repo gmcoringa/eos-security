@@ -4,6 +4,7 @@
 package com.eos.security.impl.service;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -230,35 +231,34 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 	public void updateTenantData(String tenantId, Map<String, String> tenantData) throws EOSForbiddenException,
 			EOSUnauthorizedException {
 		// checkTenantPermission(tenantId, "Tenant.Update.Data");
-		// List<String> keys = new ArrayList<>(tenantData.size());
-		// keys.addAll(tenantData.keySet());
-		// // Look for data that already exists
-		// Map<String, String> dataFound = listTenantData(tenantId, keys);
-		// List<String> remove = new ArrayList<>();
-		//
-		// // Updates
-		// log.debug("Starting Tenant data update ");
-		// for (Entry<String, String> entry : dataFound.entrySet()) {
-		// // Add removes to removal list
-		// if (StringUtil.isEmpty(tenantData.get(entry.getKey()))) {
-		// remove.add(entry.getKey());
-		// log.debug("Tenant data set for removal: " + entry.getKey());
-		// } else {
-		// // Update
-		// tenantDataDAO.updateTenantData(tenantId, entry.getKey(), entry.getValue());
-		// log.debug("Tenant data [" + entry.getKey() + "] updated");
-		// }
-		// // Remove key pair value from tenantData map
-		// tenantData.remove(entry.getKey());
-		// }
-		//
-		// // Add new data
-		// addTenantData(tenantId, tenantData);
-		// // Remove removal list
-		// if (!remove.isEmpty()) {
-		// log.debug("Starting Tenant data removal ");
-		// tenantDataDAO.deleteTenantData(tenantId, remove);
-		// }
+//		Set<String> keys = new HashSet<>(tenantData.keySet());
+//		// Look for data that already exists
+//		Map<String, String> dataFound = listTenantData(tenantId, keys);
+//		Set<String> remove = new HashSet<>();
+//
+//		// Updates
+//		log.debug("Starting Tenant data update ");
+//		for (Entry<String, String> entry : dataFound.entrySet()) {
+//			// Add removes to removal list
+//			if (StringUtil.isEmpty(tenantData.get(entry.getKey()))) {
+//				remove.add(entry.getKey());
+//				log.debug("Tenant data set for removal: " + entry.getKey());
+//			} else {
+//				// Update
+//				tenantDataDAO.updateTenantData(tenantId, entry.getKey(), entry.getValue());
+//				log.debug("Tenant data [" + entry.getKey() + "] updated");
+//			}
+//			// Remove key pair value from tenantData map
+//			tenantData.remove(entry.getKey());
+//		}
+//
+//		// Add new data
+//		addTenantData(tenantId, tenantData);
+//		// Remove removal list
+//		if (!remove.isEmpty()) {
+//			log.debug("Starting Tenant data removal ");
+//			tenantDataDAO.deleteTenantData(tenantId, remove);
+//		}
 
 		// TODO Remove tenant data cache using keys variable
 	}

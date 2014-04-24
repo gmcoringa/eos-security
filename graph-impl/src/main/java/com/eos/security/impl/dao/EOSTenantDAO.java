@@ -28,11 +28,12 @@ public class EOSTenantDAO {
 	public static final Label label = DynamicLabel.label("Tenant");
 
 	private static final String QUERY_CREATE = "MERGE (n:Tenant {alias: {alias}, name: {name}, description: {description}, "
-			+ "state: {state}}) RETURN n";
+			+ "state: {state}}) ON CREATE SET n.created = timestamp(), n.lastUpdate = timestamp() RETURN n";
 	private static final String QUERY_FIND = "MATCH (tenant:Tenant{alias : {alias}}) RETURN tenant ";
 	private static final String QUERY_UPDATE = "MATCH (tenant:Tenant{alias : {alias}}) SET tenant.name = {name}, "
-			+ "tenant.description = {description} RETURN tenant ";
-	private static final String QUERY_UPDATE_STATE = "MATCH (tenant:Tenant{alias : {alias}}) SET tenant.state = {state} RETURN tenant ";
+			+ "tenant.description = {description}, tenant.lastUpdate = timestamp() RETURN tenant ";
+	private static final String QUERY_UPDATE_STATE = "MATCH (tenant:Tenant{alias : {alias}}) SET tenant.state = {state}, "
+			+ "tenant.lastUpdate = timestamp() RETURN tenant ";
 	private static final String QUERY_FIND_BY_ALIASES = "MATCH (tenant:Tenant) WHERE tenant.alias IN {aliases} RETURN tenant ";
 	private static final String QUERY_LIST = "MATCH (tenant:Tenant) RETURN tenant SKIP {skip} LIMIT {limit} ";
 	private static final String QUERY_LIST_BY_STATE = "MATCH (tenant:Tenant) WHERE tenant.state IN {states} RETURN tenant "
