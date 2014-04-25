@@ -81,13 +81,9 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 		}
 
 		tenant = tenantDAO.create(tenant);
+		// Create meta data
+		addTenantData(tenant.getAlias(), data);
 		manager.commit();
-		//
-		// tenantDAO.persist(entity);
-		// // Create meta data
-		// addTenantData(entity.getId(), data);
-		// tenantDAO.getEntityManager().flush();
-		// tenant.setId(entity.getId());
 		// // Create administrator user with new tenant
 		// try {
 		// log.debug("Creating administrator for tenant " + tenant.getName());
@@ -110,8 +106,7 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 		// }
 		//
 		// // TODO messaging and cache
-		// log.info("Tenant created: " + tenant.toString());
-		// return tenant;
+		log.info("Tenant created: " + tenant.toString());
 		return tenant;
 	}
 
@@ -231,47 +226,49 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 	public void updateTenantData(String tenantId, Map<String, String> tenantData) throws EOSForbiddenException,
 			EOSUnauthorizedException {
 		// checkTenantPermission(tenantId, "Tenant.Update.Data");
-//		Set<String> keys = new HashSet<>(tenantData.keySet());
-//		// Look for data that already exists
-//		Map<String, String> dataFound = listTenantData(tenantId, keys);
-//		Set<String> remove = new HashSet<>();
-//
-//		// Updates
-//		log.debug("Starting Tenant data update ");
-//		for (Entry<String, String> entry : dataFound.entrySet()) {
-//			// Add removes to removal list
-//			if (StringUtil.isEmpty(tenantData.get(entry.getKey()))) {
-//				remove.add(entry.getKey());
-//				log.debug("Tenant data set for removal: " + entry.getKey());
-//			} else {
-//				// Update
-//				tenantDataDAO.updateTenantData(tenantId, entry.getKey(), entry.getValue());
-//				log.debug("Tenant data [" + entry.getKey() + "] updated");
-//			}
-//			// Remove key pair value from tenantData map
-//			tenantData.remove(entry.getKey());
-//		}
-//
-//		// Add new data
-//		addTenantData(tenantId, tenantData);
-//		// Remove removal list
-//		if (!remove.isEmpty()) {
-//			log.debug("Starting Tenant data removal ");
-//			tenantDataDAO.deleteTenantData(tenantId, remove);
-//		}
+		Set<String> keys = new HashSet<>(tenantData.keySet());
+		// Look for data that already exists
+		Map<String, String> dataFound = listTenantData(tenantId, keys);
+		Set<String> remove = new HashSet<>();
 
+		TransactionManager manager = TransactionManagerImpl.get().begin();
+		// Updates
+		log.debug("Starting Tenant data update ");
+		for (Entry<String, String> entry : dataFound.entrySet()) {
+			// Add removes to removal list
+			if (StringUtil.isEmpty(tenantData.get(entry.getKey()))) {
+				remove.add(entry.getKey());
+				log.debug("Tenant data set for removal: " + entry.getKey());
+			} else {
+				// Update
+				tenantDataDAO.updateTenantData(tenantId, entry.getKey(), entry.getValue());
+				log.debug("Tenant data [" + entry.getKey() + "] updated");
+			}
+			// Remove key pair value from tenantData map
+			tenantData.remove(entry.getKey());
+		}
+
+		// Add new data
+		addTenantData(tenantId, tenantData);
+		// Remove removal list
+		if (!remove.isEmpty()) {
+			log.debug("Starting Tenant data removal ");
+			tenantDataDAO.deleteTenantData(tenantId, remove);
+		}
+
+		manager.commit();
 		// TODO Remove tenant data cache using keys variable
 	}
 
 	/**
 	 * Add new tenant data.
 	 * 
-	 * @param tenantId
-	 *            The tenant id.
+	 * @param tenantAlias
+	 *            The tenant alias.
 	 * @param tenantData
 	 *            Data map to be added.
 	 */
-	private void addTenantData(String tenantId, Map<String, String> tenantData) {
+	private void addTenantData(String tenantAlias, Map<String, String> tenantData) {
 		// No tenant data, do nothing
 		if (tenantData == null || tenantData.isEmpty()) {
 			return;
@@ -282,11 +279,8 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 			if (StringUtil.isEmpty(data.getKey()) || StringUtil.isEmpty(data.getValue())) {
 				continue;
 			}
-			// EOSTenantDataEntity entity = new EOSTenantDataEntity();
-			// entity.setTenantId(tenantId);
-			// entity.setKey(data.getKey());
-			// entity.setValue(data.getValue());
-			// tenantDataDAO.persist(entity);
+
+			tenantDataDAO.createTenantData(tenantAlias, data.getKey(), data.getValue());
 		}
 	}
 
@@ -294,34 +288,38 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 	 * @see com.eos.security.api.service.EOSTenantService#findTenantData(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public String findTenantData(String tenantId, String key) throws EOSForbiddenException, EOSUnauthorizedException {
+	public String findTenantData(String tenantAlias, String key) throws EOSForbiddenException, EOSUnauthorizedException {
 		// checkTenantPermission(tenantId, "Tenant.View.Data");
-		// return tenantDataDAO.findTenantDataValue(tenantId, key);
-		return null;
+		TransactionManager manager = TransactionManagerImpl.get().begin();
+		String value = tenantDataDAO.findTenantDataValue(tenantAlias, key);
+		manager.commit();
+		return value;
 	}
 
 	/**
 	 * @see com.eos.security.api.service.EOSTenantService#listTenantData(java.lang.String, java.util.Set)
 	 */
 	@Override
-	public Map<String, String> listTenantData(String tenantId, Set<String> keys) throws EOSForbiddenException,
+	public Map<String, String> listTenantData(String tenantAlias, Set<String> keys) throws EOSForbiddenException,
 			EOSUnauthorizedException {
 		// checkTenantPermission(tenantId, "Tenant.View.Data");
-		// List<EOSTenantDataEntity> datas = tenantDataDAO.findTenantDataValues(tenantId, keys);
-		// return dataEntityToMap(datas);
-		return null;
+		TransactionManager manager = TransactionManagerImpl.get().begin();
+		Map<String, String> metas = tenantDataDAO.findTenantDataValues(tenantAlias, keys);
+		manager.commit();
+		return metas;
 	}
 
 	/**
 	 * @see com.eos.security.api.service.EOSTenantService#listTenantData(java.lang.String, int, int)
 	 */
 	@Override
-	public Map<String, String> listTenantData(String tenantId, int limit, int offset) throws EOSForbiddenException,
+	public Map<String, String> listTenantData(String tenantAlias, int limit, int offset) throws EOSForbiddenException,
 			EOSUnauthorizedException {
 		// checkTenantPermission(tenantId, "Tenant.View.Data");
-		// List<EOSTenantDataEntity> datas = tenantDataDAO.listTenantData(tenantId, limit, offset);
-		// return dataEntityToMap(datas);
-		return null;
+		TransactionManager manager = TransactionManagerImpl.get().begin();
+		Map<String, String> metas = tenantDataDAO.listTenantData(tenantAlias, limit, offset);
+		manager.commit();
+		return metas;
 	}
 
 	// #################

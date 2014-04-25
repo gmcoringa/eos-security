@@ -6,13 +6,14 @@ package com.eos.security.impl.listener;
 import java.util.Set;
 
 import org.neo4j.graphdb.ConstraintViolationException;
-import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.schema.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eos.common.util.CollectionUtil;
+import com.eos.security.impl.dao.EOSTenantDAO;
+import com.eos.security.impl.dao.EOSTenantDataDAO;
 import com.eos.security.impl.service.internal.TransactionManagerImpl;
 
 /**
@@ -28,9 +29,9 @@ public class SchemaUtil {
 		manager.begin();
 		try {
 			Schema schema = manager.graphDB().schema();
-			Label tenantLabel = DynamicLabel.label("Tenant");
-			createConstraint(schema, tenantLabel, CollectionUtil.asSet("alias"));
-			createIndex(schema, tenantLabel, CollectionUtil.asSet("state"));
+			createConstraint(schema, EOSTenantDAO.label, CollectionUtil.asSet("alias"));
+			createIndex(schema, EOSTenantDAO.label, CollectionUtil.asSet("state"));
+			createIndex(schema, EOSTenantDataDAO.label, CollectionUtil.asSet("key"));
 		} finally {
 			manager.commit();
 		}

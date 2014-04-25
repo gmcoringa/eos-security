@@ -3,67 +3,144 @@
  */
 package com.eos.security.impl.dao;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.neo4j.graphdb.DynamicLabel;
+import org.neo4j.graphdb.Label;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.ResourceIterator;
 import org.springframework.stereotype.Repository;
+
+import com.eos.security.impl.service.internal.TransactionManagerImpl;
 
 /**
  * @author santos.fabiano
  * 
  */
 @Repository
-public class EOSTenantDataDAO  {
-	
-	private static final String RELATION_META_NAME = "HAS_META";
-	
-	private static final String QUERY_CREATE = "";
-	
-	public void createTenantData(String alias, String key, String value){
-		
+public class EOSTenantDataDAO {
+
+	public static final Label label = DynamicLabel.label("TenantData");
+
+	private static final String QUERY_CREATE = "MERGE (meta:TenantData {metaId: {metaId}, key: {key}, value: {value}, "
+			+ "tenantAlias: {tenantAlias}}) ON CREATE SET meta.created = timestamp(), meta.lastUpdate = timestamp() ";
+
+	private static final String QUERY_CREATE_META_RELATION = "MATCH (meta:TenantData{metaId:{metaId}}), "
+			+ "(tenant:Tenant{alias:{tenantAlias}}) MERGE (tenant)-[r:HAS_META]->(meta) ";
+
+	private static final String QUERY_UPDATE = "MATCH (meta:TenantData{metaId : {metaIds}}) SET meta.value = {value}, "
+			+ "tenant.lastUpdate = timestamp() ";
+
+	private static final String QUERY_PURGE = "MATCH (meta:TenantData) WHERE meta.metaId IN {metaId} "
+			+ "OPTIONAL MATCH (meta)-[r]-() DELETE meta, r";
+	private static final String QUERY_FIND_BY_KEYS = "MATCH (tenant:Tenant{alias: {tenantAlias}})<-[:HAS_META]-(meta:TenantData) "
+			+ "WHERE meta.metaId IN {{metaIds}} RETURN meta ";
+	private static final String QUERY_FIND_BY_KEY = "MATCH (tenant:Tenant{alias: {tenantAlias}})-[:HAS_META]->"
+			+ "(meta:TenantData{metaId: {metaId}}) RETURN meta ";
+	private static final String QUERY_FIND_ALL = "MATCH (tenant:Tenant{alias: {tenantAlias}})<-[:HAS_META]-(meta:TenantData) "
+			+ "RETURN meta ORDER BY meta.key SKIP {skip} LIMIT {limit} ";
+
+	public void createTenantData(String tenantAlias, String key, String value) {
+		Map<String, Object> params = new HashMap<>(4);
+		String metaId = metaId(tenantAlias, key);
+		params.put("metaId", metaId);
+		params.put("key", key);
+		params.put("value", value);
+		params.put("tenantAlias", tenantAlias);
+
+		// Create node
+		TransactionManagerImpl.transactionManager().executionEngine().execute(QUERY_CREATE, params);
+
+		params.clear();
+		params.put("metaId", metaId);
+		params.put("tenantAlias", tenantAlias);
+		// Create relation
+		TransactionManagerImpl.transactionManager().executionEngine().execute(QUERY_CREATE_META_RELATION, params);
 	}
 
-//	public void updateTenantData(Long tenantId, String key, String value) {
-//		em.createNamedQuery(EOSTenantDataEntity.QUERY_UPDATE)
-//				.setParameter(EOSTenantDataEntity.PARAM_TENANT, tenantId)
-//				.setParameter(EOSTenantDataEntity.PARAM_KEY, key)
-//				.setParameter(EOSTenantDataEntity.PARAM_VALUE, value)
-//				.executeUpdate();
-//	}
-//
-//	public void deleteTenantData(Long tenantId, List<String> keys) {
-//		em.createNamedQuery(EOSTenantDataEntity.QUERY_DELETE_KEYS)
-//				.setParameter(EOSTenantDataEntity.PARAM_TENANT, tenantId)
-//				.setParameter(EOSTenantDataEntity.PARAM_KEY, keys)
-//				.executeUpdate();
-//	}
-//
-//	public String findTenantDataValue(Long tenantId, String key) {
-//		try {
-//			return em
-//					.createNamedQuery(EOSTenantDataEntity.QUERY_FIND,
-//							String.class)
-//					.setParameter(EOSTenantDataEntity.PARAM_TENANT, tenantId)
-//					.setParameter(EOSTenantDataEntity.PARAM_KEY, key)
-//					.getSingleResult();
-//		} catch (PersistenceException e) {
-//			return null;
-//		}
-//	}
-//
-//	public List<EOSTenantDataEntity> findTenantDataValues(Long tenantId,
-//			List<String> keys) {
-//		return em
-//				.createNamedQuery(EOSTenantDataEntity.QUERY_FIND_BY_KEYS,
-//						EOSTenantDataEntity.class)
-//				.setParameter(EOSTenantDataEntity.PARAM_TENANT, tenantId)
-//				.setParameter(EOSTenantDataEntity.PARAM_KEY, keys)
-//				.getResultList();
-//	}
-//
-//	public List<EOSTenantDataEntity> listTenantData(Long tenantId, int limit,
-//			int offset) {
-//		return em
-//				.createNamedQuery(EOSTenantDataEntity.QUERY_LIST,
-//						EOSTenantDataEntity.class)
-//				.setParameter(EOSTenantDataEntity.PARAM_TENANT, tenantId)
-//				.setFirstResult(offset).setMaxResults(limit).getResultList();
-//	}
+	public void updateTenantData(String tenantAlias, String key, String value) {
+		Map<String, Object> params = new HashMap<>(2);
+		String metaId = metaId(tenantAlias, key);
+		params.put("metaId", metaId);
+		params.put("value", value);
+
+		TransactionManagerImpl.transactionManager().executionEngine().execute(QUERY_UPDATE, params);
+	}
+
+	public void deleteTenantData(String tenantAlias, Set<String> keys) {
+		Map<String, Object> params = new HashMap<>(1);
+
+		params.put("metaIds", metaIds(tenantAlias, keys));
+		TransactionManagerImpl.transactionManager().executionEngine().execute(QUERY_PURGE, params);
+	}
+
+	public String findTenantDataValue(String tenantAlias, String key) {
+		Map<String, Object> params = new HashMap<>(2);
+
+		params.put("tenantAlias", tenantAlias);
+		params.put("metaId", metaId(tenantAlias, key));
+
+		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
+				.execute(QUERY_FIND_BY_KEY, params).columnAs("meta")) {
+			if (result.hasNext()) {
+				return (String) result.next().getProperty("value");
+			} else {
+				return null;
+			}
+		}
+	}
+
+	public Map<String, String> findTenantDataValues(String tenantAlias, Set<String> keys) {
+		Map<String, Object> params = new HashMap<>(2);
+		Map<String, String> metas = new HashMap<>(keys.size());
+
+		params.put("tenantAlias", tenantAlias);
+		params.put("metaIds", metaIds(tenantAlias, keys));
+
+		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
+				.execute(QUERY_FIND_BY_KEYS, params).columnAs("meta")) {
+			while (result.hasNext()) {
+				Node node = result.next();
+				metas.put((String) node.getProperty("key"), (String) node.getProperty("value"));
+			}
+		}
+
+		return metas;
+	}
+
+	public Map<String, String> listTenantData(String tenantAlias, int limit, int offset) {
+		Map<String, Object> params = new HashMap<>(3);
+		Map<String, String> metas = new HashMap<>(limit);
+
+		params.put("tenantAlias", tenantAlias);
+		params.put("skip", offset);
+		params.put("limit", limit);
+
+		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
+				.execute(QUERY_FIND_ALL, params).columnAs("meta")) {
+			while (result.hasNext()) {
+				Node node = result.next();
+				metas.put((String) node.getProperty("key"), (String) node.getProperty("value"));
+			}
+		}
+
+		return metas;
+	}
+
+	private String metaId(String tenantAlias, String key) {
+		return tenantAlias + ":" + "key";
+	}
+
+	private Set<String> metaIds(String tenantAlias, Set<String> keys) {
+		Set<String> ids = new HashSet<>(keys.size());
+
+		for (String key : keys) {
+			ids.add(metaId(tenantAlias, key));
+		}
+
+		return ids;
+	}
 }

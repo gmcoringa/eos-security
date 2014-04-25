@@ -25,6 +25,7 @@ import com.eos.security.impl.service.internal.TransactionManagerImpl;
  */
 @Repository
 public class EOSTenantDAO {
+	
 	public static final Label label = DynamicLabel.label("Tenant");
 
 	private static final String QUERY_CREATE = "MERGE (n:Tenant {alias: {alias}, name: {name}, description: {description}, "

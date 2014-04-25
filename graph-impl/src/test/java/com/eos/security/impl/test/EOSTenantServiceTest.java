@@ -155,28 +155,28 @@ public class EOSTenantServiceTest {
 		}
 	}
 
-	// // Tenant Data
-	//
-	// @Test
-	// public void testCreateTenantData() throws EOSException {
-	// EOSTenant tenant = new EOSTenant();
-	// EOSUser admin = getUser("test@createdata.mail");
-	// Map<String, String> tenantData = new HashMap<>(2);
-	// tenantData.put("key1", "value1");
-	// tenantData.put("key2", "value2");
-	// tenant.setName("Create tenant data").setDescription("Create tenant data description");
-	// tenant = svcTenant.createTenant(tenant, tenantData, admin);
-	//
-	// try {
-	// EOSTestUtil.setup(context, tenant.getId(), admin);
-	// tenantData = svcTenant.listTenantData(tenant.getId(), 5, 0);
-	// Assert.assertEquals("tenant data size", 2, tenantData.size());
-	// } finally {
-	// // Restore context.
-	// EOSTestUtil.setup(context);
-	// }
-	// }
-	//
+	// Tenant Data
+
+	@Test
+	public void testCreateTenantData() throws EOSException {
+		EOSTenant tenant = new EOSTenant();
+		EOSUser admin = getUser("test@createdata.mail");
+		Map<String, String> tenantData = new HashMap<>(2);
+		tenantData.put("keyCreate", "valueCreate");
+		tenant.setAlias("testMetaCreate").setName("Create tenant data")
+				.setDescription("Create tenant data description");
+		tenant = svcTenant.createTenant(tenant, tenantData, admin);
+
+		try {
+			EOSTestUtil.setup(context, tenant.getAlias(), admin);
+			String value = svcTenant.findTenantData(tenant.getAlias(), "keyCreate");
+			Assert.assertEquals("tenant data valule", "valueCreate", value);
+		} finally {
+			// Restore context.
+			EOSTestUtil.setup(context);
+		}
+	}
+
 	// @Test
 	// @Transactional(propagation = Propagation.NOT_SUPPORTED)
 	// public void testUpdateTenantData() throws EOSException {
