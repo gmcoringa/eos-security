@@ -177,44 +177,42 @@ public class EOSTenantServiceTest {
 		}
 	}
 
-	// @Test
-	// @Transactional(propagation = Propagation.NOT_SUPPORTED)
-	// public void testUpdateTenantData() throws EOSException {
-	// EOSTenant tenant = new EOSTenant();
-	// EOSUser admin = getUser("test@updatedata.mail");
-	// Map<String, String> tenantData = new HashMap<>(2);
-	// tenantData.put("key1", "value1");
-	// tenantData.put("key2", "value2");
-	//
-	// tenant.setName("Update tenant data").setDescription("Update tenant data description");
-	// tenant = svcTenant.createTenant(tenant, tenantData, admin);
-	//
-	// try {
-	// EOSTestUtil.setup(context, tenant.getId(), admin);
-	// tenantData = svcTenant.listTenantData(tenant.getId(), 5, 0);
-	// Assert.assertEquals("tenant data size", 2, tenantData.size());
-	// // Clear and rebuild tenant data
-	// tenantData.clear();
-	// tenantData.put("key1", "newValue");
-	// tenantData.put("key2", ""); // Set to be removed
-	// tenantData.put("key3", "value3"); // New value
-	// tenantData.put("key4", "value4"); // New value
-	//
-	// // Validations
-	// svcTenant.updateTenantData(tenant.getId(), tenantData);
-	// tenantData = svcTenant.listTenantData(tenant.getId(), 5, 0);
-	// Assert.assertEquals("tenant data update size", 3, tenantData.size());
-	// // tenant data with key1 check new value
-	// // Not working, fetching old value
-	// // String value = svcTenant.findTenantData(tenant.getId(), "key1");
-	// // Assert.assertEquals("tenant data update key1", "newValue",
-	// // value);
-	// } finally {
-	// // Restore context.
-	// EOSTestUtil.setup(context);
-	// }
-	// }
-	//
+	@Test
+	public void testUpdateTenantData() throws EOSException {
+		EOSTenant tenant = new EOSTenant();
+		EOSUser admin = getUser("test@updatedata.mail");
+		Map<String, String> tenantData = new HashMap<>(2);
+		tenantData.put("key1", "value1");
+		tenantData.put("key2", "value2");
+
+		tenant.setAlias("tenantUpdateData").setName("Update tenant data")
+				.setDescription("Update tenant data description");
+		tenant = svcTenant.createTenant(tenant, tenantData, admin);
+
+		try {
+			EOSTestUtil.setup(context, tenant.getAlias(), admin);
+			tenantData = svcTenant.listTenantData(tenant.getAlias(), 5, 0);
+			Assert.assertEquals("tenant data size", 2, tenantData.size());
+			// Clear and rebuild tenant data
+			tenantData.clear();
+			tenantData.put("key1", "newValue");
+			tenantData.put("key2", ""); // Set to be removed
+			tenantData.put("key3", "value3"); // New value
+			tenantData.put("key4", "value4"); // New value
+
+			// Validations
+			svcTenant.updateTenantData(tenant.getAlias(), tenantData);
+			tenantData = svcTenant.listTenantData(tenant.getAlias(), 5, 0);
+			Assert.assertEquals("tenant data update size", 3, tenantData.size());
+			// tenant data with key1 check new value
+			String value = svcTenant.findTenantData(tenant.getAlias(), "key1");
+			Assert.assertEquals("tenant data update key1", "newValue", value);
+		} finally {
+			// Restore context.
+			EOSTestUtil.setup(context);
+		}
+	}
+
 	// @Test
 	// public void testListTenantDataByKeys() throws EOSException {
 	// EOSTenant tenant = new EOSTenant();
