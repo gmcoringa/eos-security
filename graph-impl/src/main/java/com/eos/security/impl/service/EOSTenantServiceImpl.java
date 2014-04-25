@@ -241,7 +241,7 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 				log.debug("Tenant data set for removal: " + entry.getKey());
 			} else {
 				// Update
-				tenantDataDAO.updateTenantData(tenantId, entry.getKey(), entry.getValue());
+				tenantDataDAO.updateTenantData(tenantId, entry.getKey(), tenantData.get(entry.getKey()));
 				log.debug("Tenant data [" + entry.getKey() + "] updated");
 			}
 			// Remove key pair value from tenantData map

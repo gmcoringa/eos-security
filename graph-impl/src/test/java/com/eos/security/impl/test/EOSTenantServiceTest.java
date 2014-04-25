@@ -195,7 +195,7 @@ public class EOSTenantServiceTest {
 			Assert.assertEquals("tenant data size", 2, tenantData.size());
 			// Clear and rebuild tenant data
 			tenantData.clear();
-			tenantData.put("key1", "newValue");
+			tenantData.put("key1", "newValue"); // updated
 			tenantData.put("key2", ""); // Set to be removed
 			tenantData.put("key3", "value3"); // New value
 			tenantData.put("key4", "value4"); // New value
@@ -213,51 +213,55 @@ public class EOSTenantServiceTest {
 		}
 	}
 
-	// @Test
-	// public void testListTenantDataByKeys() throws EOSException {
-	// EOSTenant tenant = new EOSTenant();
-	// EOSUser admin = getUser("test@listdatakey.mail");
-	// Map<String, String> tenantData = new HashMap<>(2);
-	// tenantData.put("key1", "value1");
-	// tenantData.put("key2", "value2");
-	//
-	// tenant.setName("List tenant data keys").setDescription("List tenant data keys description");
-	// tenant = svcTenant.createTenant(tenant, tenantData, admin);
-	// try {
-	// EOSTestUtil.setup(context, tenant.getId(), admin);
-	// List<String> keys = new ArrayList<>(2);
-	// keys.addAll(tenantData.keySet());
-	// tenantData = svcTenant.listTenantData(tenant.getId(), keys);
-	//
-	// Assert.assertTrue("List tenat keys", tenantData.containsKey("key1"));
-	// Assert.assertTrue("List tenat keys", tenantData.containsKey("key2"));
-	// } finally {
-	// // Restore context.
-	// EOSTestUtil.setup(context);
-	// }
-	// }
-	//
-	// @Test
-	// public void testListTenantData() throws EOSException {
-	// EOSTenant tenant = new EOSTenant();
-	// EOSUser admin = getUser("test@listdata.mail");
-	// Map<String, String> tenantData = new HashMap<>(2);
-	// tenantData.put("key1", "value1");
-	// tenantData.put("key2", "value2");
-	// tenantData.put("key3", "value3");
-	// tenantData.put("key4", "value4");
-	//
-	// tenant.setName("List tenant data keys").setDescription("List tenant data keys description");
-	// tenant = svcTenant.createTenant(tenant, tenantData, admin);
-	//
-	// try {
-	// EOSTestUtil.setup(context, tenant.getId(), admin);
-	// tenantData = svcTenant.listTenantData(tenant.getId(), 5, 0);
-	// Assert.assertEquals("tenant data size", 4, tenantData.size());
-	// } finally {
-	// // Restore context.
-	// EOSTestUtil.setup(context);
-	// }
-	// }
+	@Test
+	public void testListTenantDataByKeys() throws EOSException {
+		EOSTenant tenant = new EOSTenant();
+		EOSUser admin = getUser("test@listdatakey.mail");
+		Map<String, String> tenantData = new HashMap<>(3);
+		tenantData.put("key1", "value1");
+		tenantData.put("key2", "value2");
+		tenantData.put("key3", "value3");
+
+		tenant.setAlias("tenantListByKeys").setName("List tenant data keys")
+				.setDescription("List tenant data keys description");
+		tenant = svcTenant.createTenant(tenant, tenantData, admin);
+		try {
+			EOSTestUtil.setup(context, tenant.getAlias(), admin);
+			Set<String> keys = new HashSet<>(2);
+			keys.add("key1");
+			keys.add("key2");
+			tenantData = svcTenant.listTenantData(tenant.getAlias(), keys);
+
+			Assert.assertTrue("List tenat keys", tenantData.containsKey("key1"));
+			Assert.assertTrue("List tenat keys", tenantData.containsKey("key2"));
+		} finally {
+			// Restore context.
+			EOSTestUtil.setup(context);
+		}
+	}
+
+	@Test
+	public void testListTenantData() throws EOSException {
+		EOSTenant tenant = new EOSTenant();
+		EOSUser admin = getUser("test@listdata.mail");
+		Map<String, String> tenantData = new HashMap<>(2);
+		tenantData.put("key1", "value1");
+		tenantData.put("key2", "value2");
+		tenantData.put("key3", "value3");
+		tenantData.put("key4", "value4");
+
+		tenant.setAlias("listTenantData").setName("List tenant data keys")
+				.setDescription("List tenant data keys description");
+		tenant = svcTenant.createTenant(tenant, tenantData, admin);
+
+		try {
+			EOSTestUtil.setup(context, tenant.getAlias(), admin);
+			tenantData = svcTenant.listTenantData(tenant.getAlias(), 5, 0);
+			Assert.assertEquals("tenant data size", 4, tenantData.size());
+		} finally {
+			// Restore context.
+			EOSTestUtil.setup(context);
+		}
+	}
 
 }
