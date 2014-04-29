@@ -31,6 +31,7 @@ public class SchemaUtil {
 			Schema schema = manager.graphDB().schema();
 			createConstraint(schema, EOSTenantDAO.label, CollectionUtil.asSet("alias"));
 			createIndex(schema, EOSTenantDAO.label, CollectionUtil.asSet("state"));
+			createConstraint(schema, EOSTenantDAO.label, CollectionUtil.asSet("metaId"));
 			createIndex(schema, EOSTenantDataDAO.label, CollectionUtil.asSet("key"));
 		} finally {
 			manager.commit();
