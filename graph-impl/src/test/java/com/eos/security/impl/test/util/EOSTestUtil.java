@@ -36,8 +36,7 @@ import com.eos.security.impl.session.SessionContextManager;
 public class EOSTestUtil {
 
 	/**
-	 * Setup session context for testing. Set default tenant and SYSTEM
-	 * administrator user.
+	 * Setup session context for testing. Set default tenant and SYSTEM administrator user.
 	 * 
 	 * @param appContext
 	 *            Application Context
@@ -46,18 +45,15 @@ public class EOSTestUtil {
 	 */
 	public static void setup(ApplicationContext appContext) throws EOSException {
 		// Already setup, return
-		if (SessionContextManager.getCurrentTenantId() != null
-				&& SessionContextManager.getCurrentTenantId().equals(EOSSystemConstants.ADMIN_TENANT)
+		if (SessionContextManager.getCurrentTenantAlias() != null
+				&& SessionContextManager.getCurrentTenantAlias().equals(EOSSystemConstants.ADMIN_TENANT)
 				&& SessionContextManager.getCurrentUserLogin() != null
-				&& EOSSystemConstants.LOGIN_SUPER_ADMIN
-						.equals(SessionContextManager.getCurrentUserLogin())) {
+				&& EOSSystemConstants.LOGIN_SUPER_ADMIN.equals(SessionContextManager.getCurrentUserLogin())) {
 			return;
 		}
 
-		final EOSUserService svcUser = appContext.getBean(EOSUserService.class);
-//		EOSUser user = svcUser.findTenantUser(
-//				EOSSystemConstants.LOGIN_SUPER_ADMIN,
-//				EOSSystemConstants.ADMIN_TENANT);
+//		final EOSUserService svcUser = appContext.getBean(EOSUserService.class);
+//		EOSUser user = svcUser.findTenantUser(EOSSystemConstants.LOGIN_SUPER_ADMIN, EOSSystemConstants.ADMIN_TENANT);
 //		setup(appContext, EOSSystemConstants.ADMIN_TENANT, user);
 	}
 
@@ -73,13 +69,10 @@ public class EOSTestUtil {
 	 * @throws EOSException
 	 *             If any problem occurs.
 	 */
-	public static void setup(ApplicationContext appContext,
-			final String alias, final EOSUser user) throws EOSException {
-		final EOSTenantService svcTenant = appContext
-				.getBean(EOSTenantService.class);
+	public static void setup(ApplicationContext appContext, final String alias, final EOSUser user) throws EOSException {
+		final EOSTenantService svcTenant = appContext.getBean(EOSTenantService.class);
 		String sessionId = SessionContextManager.getCurrentSessionId();
-		final SessionContext context = new SessionContext(
-				svcTenant.findTenant(alias), user);
+		final SessionContext context = new SessionContext(svcTenant.findTenant(alias), user);
 		final EOSSession session = EOSSession.getContext();
 
 		if (sessionId == null) {
@@ -92,37 +85,28 @@ public class EOSTestUtil {
 		SessionContextManager.setSession(sessionId, context);
 	}
 
-	public static EOSUser createUser(String prefix,
-			Map<String, String> userData, EOSUserService svcUser)
-			throws EOSDuplicatedEntryException, EOSForbiddenException,
-			EOSUnauthorizedException, EOSValidationException {
+	public static EOSUser createUser(String prefix, Map<String, String> userData, EOSUserService svcUser)
+			throws EOSDuplicatedEntryException, EOSForbiddenException, EOSUnauthorizedException, EOSValidationException {
 		EOSUser user = new EOSUser();
-		user.setLogin(prefix + "-create").setEmail(prefix + "@create.com")
-				.setFirstName(prefix + " First").setLastName(prefix + " Last")
-				.setNickName(prefix + " Nick")
-				.setPersonalMail(prefix + "@personal.com")
+		user.setLogin(prefix + "-create").setEmail(prefix + "@create.com").setFirstName(prefix + " First")
+				.setLastName(prefix + " Last").setNickName(prefix + " Nick").setPersonalMail(prefix + "@personal.com")
 				.setState(EOSState.ACTIVE);
 
 		user = svcUser.createUser(user, userData);
 		return user;
 	}
 
-	public static EOSGroup createGroup(String identifier,
-			EOSGroupService svcGroup) throws EOSDuplicatedEntryException,
-			EOSForbiddenException, EOSUnauthorizedException,
-			EOSValidationException {
-		EOSGroup group = new EOSGroup().setName("Test " + identifier)
-				.setDescription("Test description " + identifier)
+	public static EOSGroup createGroup(String identifier, EOSGroupService svcGroup) throws EOSDuplicatedEntryException,
+			EOSForbiddenException, EOSUnauthorizedException, EOSValidationException {
+		EOSGroup group = new EOSGroup().setName("Test " + identifier).setDescription("Test description " + identifier)
 				.setLevel(EOSLevel.PUBLIC.getLevel());
 
 		return svcGroup.createGroup(group);
 	}
 
-	public static EOSRole createRole(String identifier, EOSRoleService svcRole)
-			throws EOSDuplicatedEntryException, EOSForbiddenException,
-			EOSUnauthorizedException, EOSValidationException {
-		EOSRole role = new EOSRole().setCode(identifier + "-code")
-				.setDescription(identifier + " Description")
+	public static EOSRole createRole(String identifier, EOSRoleService svcRole) throws EOSDuplicatedEntryException,
+			EOSForbiddenException, EOSUnauthorizedException, EOSValidationException {
+		EOSRole role = new EOSRole().setCode(identifier + "-code").setDescription(identifier + " Description")
 				.setLevel(EOSLevel.MAXIMUM.getLevel());
 		return svcRole.createRole(role);
 	}

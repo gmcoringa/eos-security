@@ -89,10 +89,10 @@ public class EOSUserServiceTest {
 	public void testFindTenantUser() throws EOSDuplicatedEntryException, EOSForbiddenException,
 			EOSUnauthorizedException, EOSNotFoundException, EOSValidationException {
 		EOSUser user = EOSTestUtil.createUser("findtenant", null, svcUser);
-		EOSUser find = svcUser.findTenantUser(user.getLogin(), 99L);
+		EOSUser find = svcUser.findTenantUser(user.getLogin(), "notFoundUser");
 		Assert.assertNull("Find Tenant User other tenant", find);
 		// Now find for the current tenant
-		find = svcUser.findTenantUser(user.getLogin(), user.getTenantId());
+//		find = svcUser.findTenantUser(user.getLogin(), user.getTenantId());
 		Assert.assertNotNull("Find Tenant User current tenant", find);
 		Assert.assertEquals("Find User", user.getLogin(), find.getLogin());
 

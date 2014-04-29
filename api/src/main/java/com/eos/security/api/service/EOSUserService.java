@@ -27,14 +27,12 @@ public interface EOSUserService {
 	// User
 
 	/**
-	 * Create a new user. If the user already exists, a relation with the
-	 * current tenant will be created.
+	 * Create a new user. If the user already exists, a relation with the current tenant will be created.
 	 * 
 	 * @param user
 	 *            User to be created.
 	 * @param userData
-	 *            Additional user data. This data belongs only for the user in
-	 *            the current tenant.
+	 *            Additional user data. This data belongs only for the user in the current tenant.
 	 * @return The user created.
 	 * @throws EOSDuplicatedEntryException
 	 *             If an user already exists in the current tenant.
@@ -43,8 +41,7 @@ public interface EOSUserService {
 	 * @throws EOSUnauthorizedException
 	 *             Only authenticated users can create other users.
 	 * @throws EOSValidationException
-	 *             If the user contains invalid fields. For login on number,
-	 *             characters, dot and hyphen are allowed.
+	 *             If the user contains invalid fields. For login on number, characters, dot and hyphen are allowed.
 	 */
 	public EOSUser createUser(EOSUser user, Map<String, String> userData) throws EOSDuplicatedEntryException,
 			EOSForbiddenException, EOSUnauthorizedException, EOSValidationException;
@@ -56,25 +53,22 @@ public interface EOSUserService {
 	 *            User login.
 	 * @return The user or null if not found.
 	 * @throws EOSNotFoundException
-	 *             If not entity is found in the current tenant with the given
-	 *             login.
+	 *             If not entity is found in the current tenant with the given login.
 	 */
 	public EOSUser findUser(String login) throws EOSNotFoundException;
 
 	/**
-	 * Finds the user with the given login on the given tenant. Internal use
-	 * only.
+	 * Finds the user with the given login on the given tenant. Internal use only.
 	 * 
 	 * @param login
 	 *            User login.
-	 * @param tenantId
-	 *            The tenant id which the user belongs.
+	 * @param tenantAlias
+	 *            The tenant alias which the user belongs.
 	 * @return The user or null if not found.
 	 * @throws EOSNotFoundException
-	 *             If not entity is found in the given tenant with the given
-	 *             login.
+	 *             If not entity is found in the given tenant with the given login.
 	 */
-	public EOSUser findTenantUser(String login, Long tenantId) throws EOSNotFoundException;
+	public EOSUser findTenantUser(String login, String tenantAlias) throws EOSNotFoundException;
 
 	/**
 	 * Find users by their login.
@@ -86,8 +80,7 @@ public interface EOSUserService {
 	public List<EOSUser> findUsers(List<String> logins);
 
 	/**
-	 * List users with the given states. Listing user not active are requires
-	 * higher permission than usual.
+	 * List users with the given states. Listing user not active are requires higher permission than usual.
 	 * 
 	 * @param states
 	 *            If null, only active users are returned.
@@ -109,8 +102,7 @@ public interface EOSUserService {
 	 * @throws EOSUnauthorizedException
 	 *             Only authenticated users can update other users.
 	 * @throws EOSNotFoundException
-	 *             If no entity is found in the current tenant with the given
-	 *             login.
+	 *             If no entity is found in the current tenant with the given login.
 	 * @throws EOSValidationException
 	 *             If the user contains invalid fields.
 	 */
@@ -125,66 +117,59 @@ public interface EOSUserService {
 	 * @param state
 	 *            The new user state.
 	 * @throws EOSForbiddenException
-	 *             If the logged user do not have permission for user state
-	 *             update.
+	 *             If the logged user do not have permission for user state update.
 	 * @throws EOSUnauthorizedException
 	 *             Only authenticated users can update user states.
 	 * @throws EOSNotFoundException
-	 *             If no entity is found in the current tenant with the given
-	 *             login.
+	 *             If no entity is found in the current tenant with the given login.
 	 */
 	public void updateUserState(String login, EOSState state) throws EOSForbiddenException, EOSUnauthorizedException,
 			EOSNotFoundException;
 
 	/**
 	 * <p>
-	 * Delete a user, the user is physically deleted, no restore actions is
-	 * possible.
+	 * Delete a user, the user is physically deleted, no restore actions is possible.
 	 * </p>
 	 * <p>
-	 * If true and the user DO NOT exists on other tenant, the global user data
-	 * will be also purged.
+	 * If true and the user DO NOT exists on other tenant, the global user data will be also purged.
 	 * </p>
 	 * 
 	 * @param login
 	 *            User login.
 	 * @throws EOSForbiddenException
-	 *             If the logged user do not have permission for user removal or
-	 *             user current state isn't {@link EOSState#DISABLED}.
+	 *             If the logged user do not have permission for user removal or user current state isn't
+	 *             {@link EOSState#DISABLED}.
 	 * @throws EOSUnauthorizedException
 	 *             Only authenticated users can purge other users.
 	 * @throws EOSNotFoundException
-	 *             If no entity is found in the current tenant with the given
-	 *             login.
+	 *             If no entity is found in the current tenant with the given login.
 	 */
 	public void purgeUser(String login) throws EOSForbiddenException, EOSUnauthorizedException, EOSNotFoundException;
 
 	/**
-	 * Updates a user password. The oldPassword parameter is required if the
-	 * logged user do not have permissions to updates user passwords.
+	 * Updates a user password. The oldPassword parameter is required if the logged user do not have permissions to
+	 * updates user passwords.
 	 * 
 	 * @param login
 	 * @param oldPassword
 	 * @param newPassword
 	 * @throws EOSForbiddenException
-	 *             If is not the logged user changing his password and the
-	 *             logged user do not have permission to update user passwords.
+	 *             If is not the logged user changing his password and the logged user do not have permission to update
+	 *             user passwords.
 	 * @throws EOSUnauthorizedException
 	 *             Only authenticated users can change passwords.
 	 * @throws EOSValidationException
-	 *             If the parameters oldPassword and newPassword doesn't match
-	 *             for logged users changing their passwords.
+	 *             If the parameters oldPassword and newPassword doesn't match for logged users changing their
+	 *             passwords.
 	 */
 	public void setUserPassword(String login, String oldPassword, String newPassword) throws EOSForbiddenException,
 			EOSUnauthorizedException, EOSValidationException;
 
 	/**
-	 * Verify if the given user can perform login. Validates if the user state
-	 * is {@link EOSState#ACTIVE} and his type is {@link EOSUserType#USER}, also
-	 * verify if the password informed is correct.
+	 * Verify if the given user can perform login. Validates if the user state is {@link EOSState#ACTIVE} and his type
+	 * is {@link EOSUserType#USER}, also verify if the password informed is correct.
 	 * <p>
-	 * First try to find the user by login, if not found, try to find by any of
-	 * his e-mails.
+	 * First try to find the user by login, if not found, try to find by any of his e-mails.
 	 * </p>
 	 * 
 	 * @param login
@@ -195,17 +180,16 @@ public interface EOSUserService {
 	 *            The user password.
 	 * @return The user information, if its OK to perform login.
 	 * @throws EOSException
-	 *             If the user is not found, the password is not correct or the
-	 *             user do not have a valid state or type for login.
+	 *             If the user is not found, the password is not correct or the user do not have a valid state or type
+	 *             for login.
 	 */
 	public EOSUser checkForLogin(String login, String email, String password) throws EOSException;
 
 	// User Data
 
 	/**
-	 * Add user data to the given user. If the data value exists, then an update
-	 * will be performed. If value is null or empty, then the key, value pair
-	 * will be removed.
+	 * Add user data to the given user. If the data value exists, then an update will be performed. If value is null or
+	 * empty, then the key, value pair will be removed.
 	 * 
 	 * @param login
 	 *            User login.

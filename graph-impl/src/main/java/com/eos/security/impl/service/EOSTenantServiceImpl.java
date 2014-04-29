@@ -329,7 +329,7 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 	/**
 	 * Validate tenant access, current tenant equals tenantId and permissions.
 	 * 
-	 * @param tenantId
+	 * @param tenantAlias
 	 *            The tenant to be validated
 	 * @param permissions
 	 *            Permissions to be validated.
@@ -338,9 +338,9 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 	 * @throws EOSForbiddenException
 	 *             If the user has no permissions.
 	 */
-	private void checkTenantPermission(Long tenantId, String... permissions) throws EOSUnauthorizedException,
+	private void checkTenantPermission(Long tenantAlias, String... permissions) throws EOSUnauthorizedException,
 			EOSForbiddenException {
-		if (!tenantId.equals(SessionContextManager.getCurrentTenantId())) {
+		if (!tenantAlias.equals(SessionContextManager.getCurrentTenantAlias())) {
 			throw new EOSUnauthorizedException("Cross tenancy update not allowed");
 		}
 		svcSecurity.checkPermissions(permissions);

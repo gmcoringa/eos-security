@@ -33,12 +33,11 @@ public class SessionContextManager {
 		return EOSSession.getContext().getSessionId();
 	}
 
-	public static Long getCurrentTenantId() {
+	public static String getCurrentTenantAlias() {
 		SessionContext context = EOSSession.getContext().getSession();
 
 		if (context != null && context.getTenant() != null) {
-//			return context.getTenant().getId();
-			return null;
+			return context.getTenant().getAlias();
 		} else {
 			return null;
 		}

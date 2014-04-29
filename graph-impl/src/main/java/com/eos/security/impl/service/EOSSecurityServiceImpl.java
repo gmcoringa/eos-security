@@ -68,12 +68,12 @@ public class EOSSecurityServiceImpl implements EOSSecurityService {
 	}
 
 	/**
-	 * @see com.eos.security.api.service.EOSSecurityService#createSessionContext(java.lang.String, java.lang.Long)
+	 * @see com.eos.security.api.service.EOSSecurityService#createSessionContext(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public final SessionContext createSessionContext(String sessionId, Long tenantId) {
+	public final SessionContext createSessionContext(String sessionId, String tenantAlias) {
 		try {
-			return createSessionContext(sessionId, tenantId.toString(),
+			return createSessionContext(sessionId, tenantAlias,
 					svcUser.findTenantUser(EOSSystemConstants.LOGIN_ANONYMOUS, EOSSystemConstants.ADMIN_TENANT));
 		} catch (EOSNotFoundException e) {
 			// Should never happens
@@ -146,9 +146,9 @@ public class EOSSecurityServiceImpl implements EOSSecurityService {
 		final EOSUser user = svcUser.checkForLogin(login, email, password);
 		// Retrieve current session info
 		final String sessionId = SessionContextManager.getCurrentSessionId();
-		final Long tenantId = SessionContextManager.getCurrentTenantId();
+		final String tenantAlias = SessionContextManager.getCurrentTenantAlias();
 		// Create new one with logged and current session id
-		createSessionContext(sessionId, tenantId.toString(), user);
+		createSessionContext(sessionId, tenantAlias, user);
 		// TODO do something with keepConnected
 	}
 
@@ -159,9 +159,9 @@ public class EOSSecurityServiceImpl implements EOSSecurityService {
 	public void logout() throws EOSUnauthorizedException {
 		checkLogged();
 		// Retrieve current session info
-		final Long tenantId = SessionContextManager.getCurrentTenantId();
+		final String tenantAlias = SessionContextManager.getCurrentTenantAlias();
 		// Just create a new one with current tenant
-		createSessionContext(UUID.randomUUID().toString(), tenantId);
+		createSessionContext(UUID.randomUUID().toString(), tenantAlias);
 		// TODO expires old session
 	}
 
@@ -185,35 +185,34 @@ public class EOSSecurityServiceImpl implements EOSSecurityService {
 	}
 
 	/**
-	 * @see com.eos.security.api.service.EOSSecurityService#impersonate(java.lang.String, java.lang.Long,
-	 *      java.lang.Long)
+	 * @see com.eos.security.api.service.EOSSecurityService#impersonate(java.lang.String, java.lang.String,
+	 *      java.lang.String)
 	 */
 	@Override
-	public void impersonate(String login, Long userTenantId, Long sessionTenantId) throws EOSForbiddenException,
-			EOSNotFoundException {
+	public void impersonate(String login, String userTenantAlias, String sessionTenantAlias)
+			throws EOSForbiddenException, EOSNotFoundException {
 
 		final EOSSession session = EOSSession.getContext();
 		final String currentSessionId = session.getSessionId();
 		final SessionContext currentContext = session.getSession();
-		final EOSUser user = svcUser.findTenantUser(login, userTenantId);
+		final EOSUser user = svcUser.findTenantUser(login, userTenantAlias);
 
 		if (user.getType() != EOSUserType.SYSTEM) {
 			throw new EOSForbiddenException("User not a system user");
 		}
 
-		if (sessionTenantId == null) {
-			sessionTenantId = 1L;
-			// sessionTenantId = currentContext.getTenant().getId();
+		if (sessionTenantAlias == null) {
+			sessionTenantAlias = currentContext.getTenant().getAlias();
 		}
 
 		impersonates.push(currentContext);
 
 		if (log.isDebugEnabled()) {
-			log.debug("Impersonating: " + user.toString() + " on tenant: " + sessionTenantId);
+			log.debug("Impersonating: " + user.toString() + " on tenant: " + sessionTenantAlias);
 		}
 
 		// Setup session with the same session ID
-		createSessionContext(currentSessionId, sessionTenantId.toString(), user);
+		createSessionContext(currentSessionId, sessionTenantAlias, user);
 	}
 
 	/**

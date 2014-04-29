@@ -24,11 +24,11 @@ public interface EOSSecurityService {
 	 * 
 	 * @param sessionId
 	 *            The session ID.
-	 * @param tenantId
+	 * @param tenantAlias
 	 *            The tenant for this session.
 	 * @return Session context created.
 	 */
-	public SessionContext createSessionContext(String sessionId, Long tenantId);
+	public SessionContext createSessionContext(String sessionId, String tenantAlias);
 
 	/**
 	 * Retrieve session context information based on session Id.
@@ -99,18 +99,18 @@ public interface EOSSecurityService {
 	 * 
 	 * @param login
 	 *            Login of a system user.
-	 * @param userTenantId
-	 *            The tenant ID where to find the given user.
-	 * @param sessionTenantId
-	 *            Id of the tenant to be set. Optional, if null no changes are performed for tenant.
+	 * @param userTenantAlias
+	 *            The tenant alias where to find the given user.
+	 * @param sessionTenantAlias
+	 *            Alias of the tenant to be set. Optional, if null no changes are performed for tenant.
 	 * @throws EOSForbiddenException
 	 *             If the user is not a {@link EOSUserType#SYSTEM}.
 	 * @throws EOSNotFoundException
 	 *             If the user with the given userTenantId parameter do not exists, or if the tenant with
 	 *             sessionTenantId parameter do not exists.
 	 */
-	public void impersonate(String login, Long userTenantId, Long sessionTenantId) throws EOSForbiddenException,
-			EOSNotFoundException;
+	public void impersonate(String login, String userTenantAlias, String sessionTenantAlias)
+			throws EOSForbiddenException, EOSNotFoundException;
 
 	/**
 	 * Restore an impersonated user, ends an impersonated session, setting back user and tenant.

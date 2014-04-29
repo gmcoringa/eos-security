@@ -12,9 +12,9 @@ package com.eos.security.impl.service.internal;
 public interface EOSSystemConstants {
 
 	/**
-	 * Global tenant ID.
+	 * Global tenant alias.
 	 */
-	Long ADMIN_TENANT = 1L;
+	String ADMIN_TENANT = "eosTenant";
 	/**
 	 * Super Administrator user login.
 	 */
