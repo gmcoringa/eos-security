@@ -18,6 +18,7 @@ import com.eos.common.EOSState;
 import com.eos.common.util.StringUtil;
 import com.eos.security.api.vo.EOSTenant;
 import com.eos.security.impl.service.internal.TransactionManagerImpl;
+import com.eos.security.impl.service.util.ReflectionUtil;
 
 /**
  * @author santos.fabiano
@@ -25,7 +26,7 @@ import com.eos.security.impl.service.internal.TransactionManagerImpl;
  */
 @Repository
 public class EOSTenantDAO {
-	
+
 	public static final Label label = DynamicLabel.label("Tenant");
 
 	private static final String QUERY_CREATE = "MERGE (n:Tenant {alias: {alias}, name: {name}, description: {description}, "
@@ -46,7 +47,7 @@ public class EOSTenantDAO {
 		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
 				.execute(QUERY_CREATE, tenantAsMap(tenant)).columnAs("n")) {
 			if (result.hasNext()) {
-				return convertNode(result.next());
+				return ReflectionUtil.convert(result.next(), EOSTenant.class);
 			} else {
 				return null;
 			}
@@ -61,7 +62,7 @@ public class EOSTenantDAO {
 		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
 				.execute(QUERY_FIND, params).columnAs("tenant")) {
 			if (result.hasNext()) {
-				return convertNode(result.next());
+				return ReflectionUtil.convert(result.next(), EOSTenant.class);
 			} else {
 				return null;
 			}
@@ -77,7 +78,7 @@ public class EOSTenantDAO {
 		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
 				.execute(QUERY_UPDATE, params).columnAs("tenant")) {
 			if (result.hasNext()) {
-				return convertNode(result.next());
+				return ReflectionUtil.convert(result.next(), EOSTenant.class);
 			} else {
 				return null;
 			}
@@ -92,7 +93,7 @@ public class EOSTenantDAO {
 		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
 				.execute(QUERY_UPDATE_STATE, params).columnAs("tenant")) {
 			if (result.hasNext()) {
-				return convertNode(result.next());
+				return ReflectionUtil.convert(result.next(), EOSTenant.class);
 			} else {
 				return null;
 			}
@@ -117,7 +118,7 @@ public class EOSTenantDAO {
 		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
 				.execute(query, params).columnAs("tenant")) {
 			while (result.hasNext()) {
-				tenants.add(convertNode(result.next()));
+				tenants.add(ReflectionUtil.convert(result.next(), EOSTenant.class));
 			}
 		}
 
@@ -138,7 +139,7 @@ public class EOSTenantDAO {
 		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
 				.execute(QUERY_FIND_BY_ALIASES, params).columnAs("tenant")) {
 			while (result.hasNext()) {
-				tenants.add(convertNode(result.next()));
+				tenants.add(ReflectionUtil.convert(result.next(), EOSTenant.class));
 			}
 		}
 
@@ -148,14 +149,6 @@ public class EOSTenantDAO {
 	// ################################
 	// # Utilities
 	// ###############################
-
-	private EOSTenant convertNode(Node node) {
-		EOSTenant tenant = new EOSTenant();
-		tenant.setAlias((String) node.getProperty("alias")).setName((String) node.getProperty("name"))
-				.setDescription((String) node.getProperty("description"))
-				.setState(EOSState.valueOf((String) node.getProperty("state")));
-		return tenant;
-	}
 
 	private Map<String, Object> tenantAsMap(EOSTenant tenant) {
 		Map<String, Object> props = new HashMap<>(4);

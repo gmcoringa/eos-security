@@ -1,13 +1,14 @@
 /**
  * 
  */
-package com.eos.security.impl.service.internal;
+package com.eos.security.impl.service.util;
 
 import java.util.regex.Pattern;
 
 import com.eos.common.exception.EOSError;
 import com.eos.common.exception.EOSErrorCodes;
 import com.eos.common.util.StringUtil;
+import com.eos.security.impl.service.internal.EntityFieldSizes;
 
 /**
  * Validation utility.

@@ -10,6 +10,7 @@ import com.eos.security.api.vo.EOSGroup;
 import com.eos.security.api.vo.EOSRole;
 import com.eos.security.api.vo.EOSTenant;
 import com.eos.security.api.vo.EOSUser;
+import com.eos.security.impl.service.util.ValidationUtils;
 
 /**
  * Validation utility.

@@ -26,7 +26,7 @@ public class EOSUser implements Serializable {
 	private String email;
 	private EOSState state;
 	private EOSUserType type;
-	private Long tenantId;
+	private String tenantAlias;
 
 	/**
 	 * Default constructor.
@@ -164,6 +164,15 @@ public class EOSUser implements Serializable {
 	}
 
 	/**
+	 * @param state
+	 *            the state to set
+	 */
+	public EOSUser setState(String state) {
+		this.state = EOSState.valueOf(state);
+		return this;
+	}
+
+	/**
 	 * @return the type
 	 */
 	public EOSUserType getType() {
@@ -180,18 +189,27 @@ public class EOSUser implements Serializable {
 	}
 
 	/**
-	 * @return the tenantId
+	 * @param type
+	 *            the type to set
 	 */
-	public Long getTenantId() {
-		return tenantId;
+	public EOSUser setType(String type) {
+		this.type = EOSUserType.valueOf(type);
+		return this;
 	}
 
 	/**
-	 * @param tenantId
-	 *            the tenantId to set
+	 * @return the tenantAlias
 	 */
-	public EOSUser setTenantId(Long tenantId) {
-		this.tenantId = tenantId;
+	public String getTenantId() {
+		return tenantAlias;
+	}
+
+	/**
+	 * @param tenantAlias
+	 *            the tenantAlias to set
+	 */
+	public EOSUser setTenantAlias(String tenantAlias) {
+		this.tenantAlias = tenantAlias;
 		return this;
 	}
 
@@ -204,7 +222,7 @@ public class EOSUser implements Serializable {
 		int result = 1;
 		result = prime * result + ((email == null) ? 0 : email.hashCode());
 		result = prime * result + ((login == null) ? 0 : login.hashCode());
-		result = prime * result + ((tenantId == null) ? 0 : tenantId.hashCode());
+		result = prime * result + ((tenantAlias == null) ? 0 : tenantAlias.hashCode());
 		return result;
 	}
 
@@ -230,10 +248,10 @@ public class EOSUser implements Serializable {
 				return false;
 		} else if (!login.equals(other.login))
 			return false;
-		if (tenantId == null) {
-			if (other.tenantId != null)
+		if (tenantAlias == null) {
+			if (other.tenantAlias != null)
 				return false;
-		} else if (!tenantId.equals(other.tenantId))
+		} else if (!tenantAlias.equals(other.tenantAlias))
 			return false;
 		return true;
 	}
@@ -245,7 +263,7 @@ public class EOSUser implements Serializable {
 	public String toString() {
 		return "EOSUser [login=" + login + ", url=" + url + ", nickName=" + nickName + ", firstName=" + firstName
 				+ ", lastName=" + lastName + ", personalMail=" + personalMail + ", email=" + email + ", state=" + state
-				+ ", type=" + type + ", tenantId=" + tenantId + "]";
+				+ ", type=" + type + ", tenantAlias=" + tenantAlias + "]";
 	}
 
 }
