@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import com.eos.security.api.vo.EOSUser;
 import com.eos.security.impl.service.internal.TransactionManagerImpl;
+import com.eos.security.impl.service.util.ReflectionUtil;
 
 /**
  * User DAO.
@@ -35,7 +36,7 @@ public class EOSUserDAO {
 		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
 				.execute(QUERY_FIND, params).columnAs("user")) {
 			if (result.hasNext()) {
-				return convertNode(result.next());
+				return ReflectionUtil.convert(result.next(), EOSUser.class);
 			} else {
 				return null;
 			}
@@ -72,11 +73,4 @@ public class EOSUserDAO {
 //	public void deleteUser(String login) {
 //		em.createNamedQuery(EOSUserEntity.QUERY_DELETE).setParameter(EOSUserEntity.PARAM_LOGIN, login).executeUpdate();
 //	}
-	
-	private EOSUser convertNode(Node node){
-		EOSUser user = new EOSUser();
-		user.setLogin((String) node.getProperty("login")).setEmail((String) node.getProperty("email"));
-		
-		return user;
-	}
 }

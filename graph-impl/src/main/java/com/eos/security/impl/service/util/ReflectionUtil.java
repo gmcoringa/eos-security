@@ -49,22 +49,29 @@ public class ReflectionUtil {
 	}
 
 	private static <T> void setValue(Field field, T object, String value) {
-		if (field.isEnumConstant()) {
+		if (field.getType().isEnum()) {
 			try {
-				field.getDeclaringClass().getMethod("valueOf", String.class).invoke(object, value);
+				setFieldValue(field, object, field.getType().getMethod("valueOf", String.class).invoke(object, value));
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
 					| NoSuchMethodException | SecurityException e) {
-				log.debug("Failed to set value[" + value + "] to enum field: " + field.getName());
+				log.debug("Failed to set value[" + value + "] to enum field: " + field.getName(), e);
 			}
 		} else {
 			try {
-				Constructor<?> constructor = field.getDeclaringClass().getConstructor(String.class);
-				field.set(object, constructor.newInstance(value));
+				Constructor<?> constructor = field.getType().getConstructor(String.class);
+				setFieldValue(field, object, constructor.newInstance(value));
 			} catch (NoSuchMethodException | SecurityException | IllegalArgumentException | IllegalAccessException
 					| InstantiationException | InvocationTargetException e) {
-				log.debug("Failed to set value[" + value + "] to field: " + field.getName());
+				log.debug("Failed to set value[" + value + "] to field: " + field.getName(), e);
 			}
 		}
+	}
+
+	private static <T> void setFieldValue(Field field, T object, Object value) throws IllegalArgumentException,
+			IllegalAccessException {
+		field.setAccessible(true);
+		field.set(object, value);
+		field.setAccessible(false);
 	}
 
 }
