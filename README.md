@@ -1,4 +1,6 @@
 # EOS-Security
+EOS Security is a project where you will have multi-tenancy. A user can acess multiples tenants.
+This project also uses RBAC model for security.
 
 ## Pre-requires
   buildr
@@ -13,11 +15,11 @@
   TODO
 
 ## API Documentation
-All documentation can be found [here](http://docs.eossecurity.apiary.io/ "EOS Security API Documentation") 
+All documentation can be found [here](http://docs.eossecurity.apiary.io/ "EOS Security API Documentation") >> deprecated 
 
 ## TODO
   Cache required services
-  Implement security on all services (Tenant DONE)
+  Implement security on all services
   RDMS Implementation:
   	- Use C3PO for connection pool
   	- Use flyway to generate ddls and sqls
