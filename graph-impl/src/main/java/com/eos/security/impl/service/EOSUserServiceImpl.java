@@ -82,7 +82,7 @@ public class EOSUserServiceImpl implements EOSUserService {
 		// addUserTenantData(user.getLogin(), userData);
 		// }
 		//
-		// // Normal users add ro default user role
+		// // Normal users add default user role
 		// if (user.getType() == EOSUserType.USER) {
 		// svcRole.addRolesToUser(user.getLogin(), Arrays.asList(EOSSystemConstants.ROLE_TENANT_USER));
 		// }

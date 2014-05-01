@@ -200,7 +200,7 @@ public class EOSUser implements Serializable {
 	/**
 	 * @return the tenantAlias
 	 */
-	public String getTenantId() {
+	public String getTenantAlias() {
 		return tenantAlias;
 	}
 

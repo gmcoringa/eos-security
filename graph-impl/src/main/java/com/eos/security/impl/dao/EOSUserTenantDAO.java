@@ -3,6 +3,8 @@
  */
 package com.eos.security.impl.dao;
 
+import org.neo4j.graphdb.DynamicLabel;
+import org.neo4j.graphdb.Label;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -13,6 +15,12 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class EOSUserTenantDAO  {
+
+	public static final Label label = DynamicLabel.label("UserTenant");
+
+	private static final String QUERY_CREATE = "MERGE (n:UserTenant {login: {login}, firstName: {firstName}, lastName: {lastName}, "
+			+ "personalMail: {personalMail}, type: {type}}) ON CREATE SET n.created = timestamp(), n.lastUpdate = timestamp() RETURN n";
+	private static final String QUERY_FIND = "MATCH (user:UserTenant{login : {login}}) RETURN user ";
 
 //	@PersistenceContext
 //	private EntityManager em;

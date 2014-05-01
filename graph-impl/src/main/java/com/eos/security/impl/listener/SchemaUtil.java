@@ -37,7 +37,7 @@ public class SchemaUtil {
 			createConstraint(schema, EOSTenantDAO.label, CollectionUtil.asSet("metaId"));
 			createIndex(schema, EOSTenantDataDAO.label, CollectionUtil.asSet("key"));
 			// User
-//			createConstraint(schema, EOSUserDAO.label, CollectionUtil.asSet("login"));
+			createConstraint(schema, EOSUserDAO.label, CollectionUtil.asSet("login"));
 			
 		} finally {
 			manager.commit();
