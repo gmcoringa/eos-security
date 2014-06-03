@@ -3,6 +3,7 @@
  */
 package com.eos.security.impl.service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.eos.common.EOSState;
+import com.eos.common.EOSUserType;
 import com.eos.common.exception.EOSDuplicatedEntryException;
 import com.eos.common.exception.EOSException;
 import com.eos.common.exception.EOSNotFoundException;
@@ -22,10 +24,14 @@ import com.eos.security.api.service.EOSGroupService;
 import com.eos.security.api.service.EOSRoleService;
 import com.eos.security.api.service.EOSSecurityService;
 import com.eos.security.api.service.EOSUserService;
+import com.eos.security.api.service.TransactionManager;
 import com.eos.security.api.vo.EOSUser;
 import com.eos.security.impl.dao.EOSUserDAO;
 import com.eos.security.impl.dao.EOSUserTenantDAO;
 import com.eos.security.impl.dao.EOSUserTenantDataDAO;
+import com.eos.security.impl.service.internal.EOSSystemConstants;
+import com.eos.security.impl.service.internal.EOSValidator;
+import com.eos.security.impl.service.internal.TransactionManagerImpl;
 import com.eos.security.impl.session.SessionContextManager;
 
 /**
@@ -59,66 +65,51 @@ public class EOSUserServiceImpl implements EOSUserService {
 	public EOSUser createUser(EOSUser user, Map<String, String> userData) throws EOSDuplicatedEntryException,
 			EOSForbiddenException, EOSUnauthorizedException, EOSValidationException {
 		// TODO security
-		// EOSUserEntity entity = userDAO.checkedFind(user.getLogin());
-		//
-		// if (entity == null) {
-		// EOSValidator.validateUser(user);
-		// log.debug("User entity not found, creating it");
-		// entity = new EOSUserEntity();
-		// entity.setLogin(user.getLogin()).setEmail(user.getPersonalMail()).setFirstName(user.getFirstName())
-		// .setLastName(user.getLastName());
-		// // Create user
-		// userDAO.persist(entity);
-		// }
-		//
-		// EOSUserTenantEntity userTenant = addUserToTenant(user.getLogin(), user.getNickName(), user.getEmail(),
-		// user.getState());
-		//
-		// // Override state and tenant
-		// user.setState(userTenant.getState()).setTenantId(userTenant.getTenantId());
-		//
-		// // User data
-		// if (userData != null && !userData.isEmpty()) {
-		// addUserTenantData(user.getLogin(), userData);
-		// }
-		//
-		// // Normal users add default user role
-		// if (user.getType() == EOSUserType.USER) {
-		// svcRole.addRolesToUser(user.getLogin(), Arrays.asList(EOSSystemConstants.ROLE_TENANT_USER));
-		// }
-		//
-		// return user;
-		return null;
-	}
+		TransactionManager manager = TransactionManagerImpl.get().begin();
+		// Override tenant alias
+		user.setTenantAlias(SessionContextManager.getCurrentTenantAlias());
+		EOSValidator.validateUser(user);
+		EOSUser tenantUser = userTenantDAO.findByLogin(user.getLogin(), SessionContextManager.getCurrentTenantAlias());
 
-	// /**
-	// * Add a user to a tenant.
-	// *
-	// * @param login
-	// * @param nickName
-	// * @param email
-	// * @param state
-	// * @return The user tenant created.
-	// */
-	// private EOSUserTenantEntity addUserToTenant(String login, String nickName, String email, EOSState state) {
-	// log.debug("Adding user " + login + " to current tenant");
-	// EOSUserTenantEntity entity = new EOSUserTenantEntity();
-	// entity.setLogin(login).setNickName(nickName).setTenantMail(email);
-	//
-	// if (state != null) {
-	// entity.setState(state);
-	// }
-	//
-	// userTenantDAO.persist(entity);
-	// return entity;
-	// }
+		if (tenantUser != null) {
+			throw new EOSDuplicatedEntryException("There a user with the given login within the given tenant");
+		}
+
+		EOSUser eosUser = userDAO.findUser(user.getLogin());
+
+		if (eosUser == null) {
+			log.debug("User entity not found, creating it");
+			eosUser = userDAO.createUser(user, null);
+		}
+
+		tenantUser = userTenantDAO.createUser(user);
+
+		// Override state and tenant
+		user.setState(tenantUser.getState());
+
+		// User data
+		if (userData != null && !userData.isEmpty()) {
+			addUserTenantData(user.getLogin(), userData);
+		}
+
+		// Normal users add default user role
+		if (user.getType() == EOSUserType.USER) {
+			svcRole.addRolesToUser(user.getLogin(), Arrays.asList(EOSSystemConstants.ROLE_TENANT_USER));
+		}
+
+		manager.commit();
+		return user;
+	}
 
 	/**
 	 * @see com.eos.security.api.service.EOSUserService#findUser(java.lang.String)
 	 */
 	@Override
 	public EOSUser findUser(String login) throws EOSNotFoundException {
-		return findTenantUser(login, SessionContextManager.getCurrentTenantAlias());
+		TransactionManager manager = TransactionManagerImpl.get().begin();
+		EOSUser user = findTenantUser(login, SessionContextManager.getCurrentTenantAlias());
+		manager.commit();
+		return user;
 	}
 
 	/**
@@ -127,8 +118,10 @@ public class EOSUserServiceImpl implements EOSUserService {
 	@Override
 	public EOSUser findTenantUser(String login, String tenantAlias) throws EOSNotFoundException {
 		// TODO Validations, cache and security
-		// return entityToVo(userTenantDAO.findByLogin(login, tenantId));
-		return null;
+		TransactionManager manager = TransactionManagerImpl.get().begin();
+		EOSUser user = compose(userTenantDAO.findByLogin(login, tenantAlias), userDAO.findUser(login));
+		manager.commit();
+		return user;
 	}
 
 	/**
@@ -450,6 +443,28 @@ public class EOSUserServiceImpl implements EOSUserService {
 	public Map<String, Boolean> hasPermission(String login, List<String> permissions) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	// *******************
+	// Utilities
+	// *******************
+
+	/**
+	 * Compose a tenant user with a user. If tenant user is null, then null is returned.
+	 * 
+	 * @param tenantUser
+	 *            - Tenant User
+	 * @param user
+	 *            - User (global)
+	 * @return TenantUser composition or null if tenant user is null.
+	 */
+	private EOSUser compose(EOSUser tenantUser, EOSUser user) {
+		if (tenantUser == null) {
+			return null;
+		}
+
+		return user.setNickName(tenantUser.getNickName()).setEmail(tenantUser.getEmail())
+				.setState(tenantUser.getState()).setTenantAlias(tenantUser.getTenantAlias());
 	}
 
 }

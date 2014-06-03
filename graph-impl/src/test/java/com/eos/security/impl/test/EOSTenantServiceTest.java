@@ -151,7 +151,7 @@ public class EOSTenantServiceTest {
 			Assert.assertNull("Not found purged tenant", tenant);
 			Assert.fail("Tenant purged should not be found");
 		} catch (EOSNotFoundException e) {
-			// Nothing, exception espected
+			// Nothing, exception expected
 		}
 	}
 

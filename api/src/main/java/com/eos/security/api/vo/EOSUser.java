@@ -33,6 +33,8 @@ public class EOSUser implements Serializable {
 	 */
 	public EOSUser() {
 		super();
+		state = EOSState.INACTIVE;
+		type = EOSUserType.USER;
 	}
 
 	/**

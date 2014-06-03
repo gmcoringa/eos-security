@@ -52,9 +52,9 @@ public class EOSTestUtil {
 			return;
 		}
 
-//		final EOSUserService svcUser = appContext.getBean(EOSUserService.class);
-//		EOSUser user = svcUser.findTenantUser(EOSSystemConstants.LOGIN_SUPER_ADMIN, EOSSystemConstants.ADMIN_TENANT);
-//		setup(appContext, EOSSystemConstants.ADMIN_TENANT, user);
+		final EOSUserService svcUser = appContext.getBean(EOSUserService.class);
+		EOSUser user = svcUser.findTenantUser(EOSSystemConstants.LOGIN_SUPER_ADMIN, EOSSystemConstants.ADMIN_TENANT);
+		setup(appContext, EOSSystemConstants.ADMIN_TENANT, user);
 	}
 
 	/**

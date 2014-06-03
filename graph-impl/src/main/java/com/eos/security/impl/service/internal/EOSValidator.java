@@ -40,7 +40,6 @@ public final class EOSValidator {
 
 	public static void validateUser(EOSUser user) throws EOSValidationException {
 		EOSErrorFactory factory = new EOSErrorFactory();
-		;
 		factory.addError(ValidationUtils.validatePathString("user login", user.getLogin(), EntityFieldSizes.MINIMUM,
 				EntityFieldSizes.DATA_TINY, true));
 		factory.addError(ValidationUtils.validateEmail("personal email", user.getPersonalMail(), true));
@@ -51,6 +50,8 @@ public final class EOSValidator {
 		factory.addError(ValidationUtils.validateString("user nickname", user.getNickName(), false,
 				EntityFieldSizes.MINIMUM, EntityFieldSizes.DATA_TINY));
 		factory.addError(ValidationUtils.validateEmail("user tenant email", user.getEmail(), false));
+		factory.addError(ValidationUtils.requiredNotNull("user state", user.getState()));
+		factory.addError(ValidationUtils.requiredNotNull("user typr", user.getType()));
 
 		checkErrors(factory);
 	}

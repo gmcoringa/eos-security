@@ -15,6 +15,7 @@ import com.eos.common.util.CollectionUtil;
 import com.eos.security.impl.dao.EOSTenantDAO;
 import com.eos.security.impl.dao.EOSTenantDataDAO;
 import com.eos.security.impl.dao.EOSUserDAO;
+import com.eos.security.impl.dao.EOSUserTenantDAO;
 import com.eos.security.impl.service.internal.TransactionManagerImpl;
 
 /**
@@ -38,7 +39,7 @@ public class SchemaUtil {
 			createIndex(schema, EOSTenantDataDAO.label, CollectionUtil.asSet("key"));
 			// User
 			createConstraint(schema, EOSUserDAO.label, CollectionUtil.asSet("login"));
-			
+			createConstraint(schema, EOSUserTenantDAO.label, CollectionUtil.asSet("login"));
 		} finally {
 			manager.commit();
 		}

@@ -11,7 +11,6 @@ import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +43,6 @@ import com.eos.security.impl.test.util.EOSTestUtil;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/spring-test.xml" })
-@Ignore
 public class EOSUserServiceTest {
 
 	@Autowired
@@ -92,13 +90,13 @@ public class EOSUserServiceTest {
 		EOSUser find = svcUser.findTenantUser(user.getLogin(), "notFoundUser");
 		Assert.assertNull("Find Tenant User other tenant", find);
 		// Now find for the current tenant
-//		find = svcUser.findTenantUser(user.getLogin(), user.getTenantId());
+		find = svcUser.findTenantUser(user.getLogin(), user.getTenantAlias());
 		Assert.assertNotNull("Find Tenant User current tenant", find);
 		Assert.assertEquals("Find User", user.getLogin(), find.getLogin());
 
 	}
 
-	@Test
+//	@Test
 	public void testFindUsers() throws EOSDuplicatedEntryException, EOSForbiddenException, EOSUnauthorizedException,
 			EOSValidationException {
 		EOSUser user1 = EOSTestUtil.createUser("finds1", null, svcUser);
@@ -110,7 +108,7 @@ public class EOSUserServiceTest {
 		Assert.assertEquals("Find users User2", users.get(1).getLogin(), user2.getLogin());
 	}
 
-	@Test
+//	@Test
 	public void testUpdateUser() throws EOSDuplicatedEntryException, EOSForbiddenException, EOSUnauthorizedException,
 			EOSNotFoundException, EOSValidationException {
 		EOSUser user = EOSTestUtil.createUser("update", null, svcUser);
@@ -128,7 +126,7 @@ public class EOSUserServiceTest {
 		Assert.assertEquals("Update user: personal mail", user.getPersonalMail(), saved.getPersonalMail());
 	}
 
-	@Test
+//	@Test
 	public void testUpdateState() throws EOSDuplicatedEntryException, EOSForbiddenException, EOSUnauthorizedException,
 			EOSValidationException, EOSNotFoundException {
 		EOSUser user = EOSTestUtil.createUser("update-state", null, svcUser);
@@ -137,7 +135,7 @@ public class EOSUserServiceTest {
 		Assert.assertEquals("Update user state", EOSState.DISABLED, updated.getState());
 	}
 
-	@Test
+//	@Test
 	public void testPurgeUser() throws EOSDuplicatedEntryException, EOSForbiddenException, EOSUnauthorizedException,
 			EOSValidationException, EOSNotFoundException {
 		Map<String, String> userData = new HashMap<>(2);
@@ -162,7 +160,7 @@ public class EOSUserServiceTest {
 		}
 	}
 
-	@Test
+//	@Test
 	public void testListUser() throws EOSDuplicatedEntryException, EOSForbiddenException, EOSUnauthorizedException,
 			EOSValidationException {
 		EOSTestUtil.createUser("list-1", null, svcUser);
@@ -171,14 +169,14 @@ public class EOSUserServiceTest {
 		Assert.assertTrue("List users size", users.size() >= 2);
 	}
 
-	@Test
+//	@Test
 	public void testSetPassword() throws EOSException {
 		EOSUser user = EOSTestUtil.createUser("setPassword", null, svcUser);
 		String password = "password";
 		svcUser.setUserPassword(user.getLogin(), null, password);
 
 		try {
-//			EOSTestUtil.setup(context, user.getTenantId(), user);
+			// EOSTestUtil.setup(context, user.getTenantId(), user);
 			svcUser.setUserPassword(user.getLogin(), password, "newPassword");
 		} catch (EOSForbiddenException | EOSUnauthorizedException | EOSValidationException e) {
 			Assert.fail("Logged user change password failed: " + e.getMessage());
@@ -187,7 +185,7 @@ public class EOSUserServiceTest {
 		EOSTestUtil.setup(context);
 	}
 
-	@Test
+//	@Test
 	public void testCheckForLogin() throws EOSException {
 		EOSUser user = EOSTestUtil.createUser("checkForLogin", null, svcUser);
 		String password = "password";
@@ -198,7 +196,7 @@ public class EOSUserServiceTest {
 
 	// User Data
 
-	@Test
+//	@Test
 	public void createUserData() throws EOSDuplicatedEntryException, EOSForbiddenException, EOSUnauthorizedException,
 			EOSValidationException {
 		Map<String, String> userData = new HashMap<>(1);
@@ -209,7 +207,7 @@ public class EOSUserServiceTest {
 		Assert.assertEquals("Create User Data", "value", value);
 	}
 
-	@Test
+//	@Test
 	public void updateUserData() throws EOSDuplicatedEntryException, EOSForbiddenException, EOSUnauthorizedException,
 			EOSValidationException {
 		Map<String, String> userData = new HashMap<>(2);
@@ -231,13 +229,11 @@ public class EOSUserServiceTest {
 		userData = svcUser.listUserData(user.getLogin(), 5, 0);
 		Assert.assertEquals("user data update size", 3, userData.size());
 		// user data with key1 check new value
-		// FIXME Not working, fetching old value
-		// String value = svcUser.findUserData(user.getLogin(), "key1");
-		// Assert.assertEquals("tenant data update key1", "newValue", value);
-
+		String value = svcUser.findUserData(user.getLogin(), "key1");
+		Assert.assertEquals("tenant data update key1", "newValue", value);
 	}
 
-	@Test
+//	@Test
 	public void listUserData() throws EOSDuplicatedEntryException, EOSForbiddenException, EOSUnauthorizedException,
 			EOSValidationException {
 		Map<String, String> userData = new HashMap<>(2);
@@ -246,10 +242,9 @@ public class EOSUserServiceTest {
 
 		EOSUser user = EOSTestUtil.createUser("list-user-data", userData, svcUser);
 		Assert.assertEquals("Update user data: create-size", 2, svcUser.listUserData(user.getLogin(), 5, 0).size());
-
 	}
 
-	@Test
+//	@Test
 	public void listUserDataByKey() throws EOSDuplicatedEntryException, EOSForbiddenException,
 			EOSUnauthorizedException, EOSValidationException {
 		Map<String, String> userData = new HashMap<>(3);
