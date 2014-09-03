@@ -19,7 +19,6 @@ import com.eos.common.exception.EOSError;
 import com.eos.common.exception.EOSErrorCodes;
 import com.eos.common.exception.EOSException;
 import com.eos.common.exception.EOSNotFoundException;
-import com.eos.common.exception.EOSRuntimeException;
 import com.eos.common.exception.EOSValidationException;
 import com.eos.security.api.exception.EOSForbiddenException;
 import com.eos.security.api.exception.EOSUnauthorizedException;
@@ -32,58 +31,43 @@ import com.eos.security.web.util.WebUtils;
  * 
  */
 @Provider
-public class EOSSecurityExceptionMapper implements ExceptionMapper<Throwable> {
+public class EOSSecurityExceptionMapper implements ExceptionMapper<Exception> {
 
-	private static final Logger log = LoggerFactory
-			.getLogger(EOSSecurityExceptionMapper.class);
+	private static final Logger log = LoggerFactory.getLogger(EOSSecurityExceptionMapper.class);
 
 	private static final int SC_UNPROCESSABLE_ENTITY = 422;
 
 	/**
-	 * @see javax.ws.rs.ext.ExceptionMapper#toResponse(java.lang.Throwable)
+	 * @see javax.ws.rs.ext.ExceptionMapper#toResponse(java.lang.Exception)
 	 */
 	@Override
-	public Response toResponse(Throwable throwable) {
-		log.error("Returning exception as JSON.", throwable);
+	public Response toResponse(Exception exception) {
+		log.error("Returning exception as JSON.", exception);
 		ResponseBuilder builder = null;
-		EOSException exception = null;
+		EOSException eosException = null;
 
-		if (EOSNotFoundException.class.isAssignableFrom(throwable.getClass())) {
+		if (EOSNotFoundException.class.isAssignableFrom(exception.getClass())) {
 			builder = Response.status(HttpServletResponse.SC_NOT_FOUND);
-			exception = (EOSException) throwable;
-		} else if (EOSForbiddenException.class.isAssignableFrom(throwable
-				.getClass())) {
+			eosException = (EOSException) exception;
+		} else if (EOSForbiddenException.class.isAssignableFrom(exception.getClass())) {
 			builder = Response.status(HttpServletResponse.SC_FORBIDDEN);
-			exception = (EOSException) throwable;
-		} else if (EOSUnauthorizedException.class.isAssignableFrom(throwable
-				.getClass())) {
+			eosException = (EOSException) exception;
+		} else if (EOSUnauthorizedException.class.isAssignableFrom(exception.getClass())) {
 			builder = Response.status(HttpServletResponse.SC_UNAUTHORIZED);
-			exception = (EOSException) throwable;
-		} else if (EOSException.class.isAssignableFrom(throwable.getClass())) {
+			eosException = (EOSException) exception;
+		} else if (EOSException.class.isAssignableFrom(exception.getClass())) {
 			builder = Response.status(HttpServletResponse.SC_BAD_REQUEST);
-			exception = (EOSException) throwable;
-		} else if (EOSRuntimeException.class.isAssignableFrom(throwable
-				.getClass())) {
-			builder = Response
-					.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			EOSRuntimeException runtime = (EOSRuntimeException) throwable;
-			exception = new EOSException(runtime.getMessage(),
-					runtime.getErrors());
-		} else if (EOSValidationException.class.isAssignableFrom(throwable
-				.getClass())) {
+			eosException = (EOSException) exception;
+		} else if (EOSValidationException.class.isAssignableFrom(exception.getClass())) {
 			builder = Response.status(SC_UNPROCESSABLE_ENTITY);
-			exception = (EOSException) throwable;
+			eosException = (EOSException) exception;
 		} else {
-			builder = Response
-					.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			EOSError error = new EOSError(EOSErrorCodes.GENERIC,
-					throwable.getMessage());
-			exception = new EOSException(throwable.getMessage(),
-					Arrays.asList(error));
+			builder = Response.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			EOSError error = new EOSError(EOSErrorCodes.GENERIC, exception.getMessage());
+			eosException = new EOSException(exception.getMessage(), Arrays.asList(error));
 		}
 
-		builder.type(MediaType.APPLICATION_JSON).entity(
-				WebUtils.formatResponse(exception));
+		builder.type(MediaType.APPLICATION_JSON).entity(WebUtils.formatResponse(eosException));
 		return builder.build();
 	}
 

@@ -10,7 +10,7 @@ import java.util.List;
  * @author santos.fabiano
  * 
  */
-public class EOSException extends Exception {
+public class EOSException extends RuntimeException {
 
 	private static final long serialVersionUID = 6001569929386767813L;
 	private List<EOSError> errors = new ArrayList<>();

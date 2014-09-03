@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,6 +54,11 @@ public class EOSTenantServiceTest {
 	public void setUp() throws EOSException {
 		// EOSTestUtil.setup(context);
 	}
+	
+	@AfterClass
+	public static void afterClass(){
+		EOSTestUtil.clearDataBase();
+	}
 
 	// Tenant
 
@@ -96,7 +102,7 @@ public class EOSTenantServiceTest {
 				.setDescription("Test list description 1"), null, getUser("test@list1.mail")));
 		createds.add(svcTenant.createTenant(new EOSTenant().setAlias("listTenant2").setName("Test list tenant 2")
 				.setDescription("Test list description 2"), null, getUser("test@list2.mail")));
-		Set<EOSTenant> tenants = svcTenant.listTenants(null, 5, 0);
+		Set<EOSTenant> tenants = svcTenant.listTenants(null, 15, 0);
 		Assert.assertTrue("List tenants higher than 1", tenants.size() > 1);
 		Assert.assertTrue("Tenants contains", tenants.containsAll(createds));
 	}

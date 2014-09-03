@@ -6,9 +6,6 @@ repositories.remote << "http://repo1.maven.org/maven2"
 
 
 ## Dependencies
-#PERSISTENCE = ['javax:javaee-api:jar:6.0', 'javax.validation:validation-api:jar:1.1.0.Final', 'com.eos:eos-commons-jpa:jar:0.0.1']
-# Somehow javaee-api gives the exception: Caused by: java.lang.ClassFormatError: Absent Code attribute in method that is not native or abstract in class file javax/persistence/PersistenceException
-PERSISTENCE = ['org.hibernate.javax.persistence:hibernate-jpa-2.0-api:jar:1.0.1.Final', 'javax.validation:validation-api:jar:1.1.0.Final']
 
 SPRING = group('spring-core', 'spring-orm', 'spring-context', 'spring-tx', 'spring-beans', 'spring-web',
 	:under => 'org.springframework', :version => '3.2.4.RELEASE')
@@ -20,8 +17,6 @@ SCANNOTATION = 'org.scannotation:scannotation:jar:1.0.3'
 SLF4J = 'org.slf4j:slf4j-api:jar:1.7.5'
 #LOG4J = [transitive('org.apache.logging.log4j:log4j-slf4j-impl:jar:2.0-beta9')]
 LOG4J = [transitive('log4j:log4j:jar:1.2.17'), 'org.slf4j:slf4j-log4j12:jar:1.7.5']
-
-HIBERNATE = transitive('org.hibernate:hibernate-entitymanager:jar:4.2.6.Final')
 
 # Use the same provided by REST_IMPL
 JSON_PROVIDER = ['org.codehaus.jackson:jackson-core-asl:jar:1.9.12', 'org.codehaus.jackson:jackson-mapper-asl:jar:1.9.12']

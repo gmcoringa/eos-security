@@ -12,7 +12,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.type.TypeReference;
 
-import com.eos.common.exception.EOSRuntimeException;
+import com.eos.common.exception.EOSException;
 
 /**
  * Factory for load role resources.
@@ -38,7 +38,7 @@ public class RoleCreatorFactory {
 			List<RoleCreator> roles = mapper.readValue(resource, reference);
 			return roles;
 		} catch (IOException e) {
-			throw new EOSRuntimeException("Failed to parse json", e);
+			throw new EOSException("Failed to parse json", e);
 		}
 	}
 }

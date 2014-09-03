@@ -18,7 +18,6 @@ import com.eos.common.EOSUserType;
 import com.eos.common.exception.EOSException;
 import com.eos.common.exception.EOSInvalidStateException;
 import com.eos.common.exception.EOSNotFoundException;
-import com.eos.common.exception.EOSRuntimeException;
 import com.eos.common.util.CollectionUtil;
 import com.eos.security.api.exception.EOSForbiddenException;
 import com.eos.security.api.exception.EOSUnauthorizedException;
@@ -78,7 +77,7 @@ public class EOSSecurityServiceImpl implements EOSSecurityService {
 		} catch (EOSNotFoundException e) {
 			// Should never happens
 			log.debug("Anonymous user not found");
-			throw new EOSRuntimeException("Anonymouos user not found", e);
+			throw new EOSException("Anonymouos user not found", e);
 		}
 	}
 
@@ -238,7 +237,7 @@ public class EOSSecurityServiceImpl implements EOSSecurityService {
 			createSessionContext(currentSessionId, oldContext.getTenant().getAlias(), oldContext.getUser());
 		} catch (EOSNotFoundException e) {
 			// Should never happens
-			throw new EOSRuntimeException("Tenant not found", e);
+			throw new EOSException("Tenant not found", e);
 		}
 	}
 
