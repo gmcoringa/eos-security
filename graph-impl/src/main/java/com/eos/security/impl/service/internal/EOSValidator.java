@@ -71,8 +71,8 @@ public final class EOSValidator {
 	public static void validateTenant(EOSTenant tenant) throws EOSValidationException {
 		EOSErrorFactory factory = new EOSErrorFactory();
 
-		factory.addError(ValidationUtils.validateString("tenant alias", tenant.getAlias(), true,
-				EntityFieldSizes.MINIMUM, EntityFieldSizes.DATA_SMALL));
+		factory.addError(ValidationUtils.validatePathString("tenant alias", tenant.getAlias(),
+				EntityFieldSizes.MINIMUM, EntityFieldSizes.DATA_SMALL, true));
 		factory.addError(ValidationUtils.validateString("tenant name", tenant.getName(), true,
 				EntityFieldSizes.MINIMUM, EntityFieldSizes.DATA_SMALL));
 		factory.addError(ValidationUtils.maxLength("tenant description", tenant.getDescription(),

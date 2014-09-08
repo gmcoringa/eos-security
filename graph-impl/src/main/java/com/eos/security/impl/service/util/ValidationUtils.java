@@ -49,7 +49,7 @@ public final class ValidationUtils {
 		String message = getMessage(fieldName, String.valueOf(min) + " <= " + fieldName + " <= " + String.valueOf(max),
 				value != null ? String.valueOf(value.length()) : "null");
 
-		if (required && StringUtil.isEmpty(value)) {
+		if (required && StringUtil.isBlankOrNull(value)) {
 			return new EOSError(EOSErrorCodes.REQUIRED, message);
 		}
 
@@ -106,7 +106,7 @@ public final class ValidationUtils {
 		return null;
 	}
 
-	private static final Pattern PATH_PATTERN = Pattern.compile("[a-zA-Z0-9]+[a-zA-Z0-9.-]+");
+	private static final Pattern PATH_PATTERN = Pattern.compile("(^[a-zA-Z0-9])([a-zA-Z0-9_.-]+)");
 	private static final String PATH_ERROR = "Invalid characters";
 
 	public static EOSError validatePathString(String fieldName, String value, int min, int max, boolean required) {

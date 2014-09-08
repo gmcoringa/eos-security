@@ -12,11 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eos.common.util.CollectionUtil;
-import com.eos.security.impl.dao.EOSTenantDAO;
-import com.eos.security.impl.dao.EOSTenantDataDAO;
-import com.eos.security.impl.dao.EOSUserDAO;
-import com.eos.security.impl.dao.EOSUserTenantDAO;
 import com.eos.security.impl.service.TransactionManager;
+import com.eos.security.impl.service.tenant.EOSTenantDAO;
+import com.eos.security.impl.service.tenant.EOSTenantDataDAO;
+import com.eos.security.impl.service.user.EOSUserDAO;
+import com.eos.security.impl.service.user.EOSUserTenantDAO;
 
 /**
  * @author fabiano.santos

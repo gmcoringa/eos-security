@@ -18,8 +18,14 @@ public class StringUtil {
 	 *            String to be validated.
 	 * @return True if value is empty or null, false otherwise.
 	 */
-	public static boolean isEmpty(String value) {
+	public static boolean isBlankOrNull(String value) {
 		return value == null || value.trim().isEmpty();
 	}
+	
+
+	public static boolean isNotBlankOrNull(String value) {
+		return !isBlankOrNull(value);
+	}
+	
 
 }

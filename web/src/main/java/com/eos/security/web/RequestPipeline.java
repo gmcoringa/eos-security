@@ -79,7 +79,7 @@ public class RequestPipeline implements Filter {
 			HttpServletResponse response) throws EOSNotFoundException {
 		String sessionId = getSessionCookie(request);
 
-		if (!StringUtil.isEmpty(sessionId)) {
+		if (!StringUtil.isBlankOrNull(sessionId)) {
 			svcSecurity.setupSession(sessionId);
 		}
 	}

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.eos.security.impl.service;
+package com.eos.security.impl.service.role;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,9 +22,6 @@ import com.eos.security.api.service.EOSUserService;
 import com.eos.security.api.vo.EOSGroup;
 import com.eos.security.api.vo.EOSRole;
 import com.eos.security.api.vo.EOSUser;
-import com.eos.security.impl.dao.EOSRoleDAO;
-import com.eos.security.impl.dao.EOSRoleGroupDAO;
-import com.eos.security.impl.dao.EOSRoleUserDAO;
 import com.eos.security.impl.service.internal.EOSValidator;
 
 /**

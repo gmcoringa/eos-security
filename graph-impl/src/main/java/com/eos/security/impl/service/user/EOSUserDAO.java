@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.eos.security.impl.dao;
+package com.eos.security.impl.service.user;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -69,7 +69,7 @@ public class EOSUserDAO {
 		params.put("personalMail", user.getPersonalMail());
 		params.put("type", user.getType().name());
 
-		if (!StringUtil.isEmpty(password)) {
+		if (!StringUtil.isBlankOrNull(password)) {
 			params.put("password", password);
 		}
 

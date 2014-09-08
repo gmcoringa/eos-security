@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.eos.security.impl.service;
+package com.eos.security.impl.service.group;
 
 import java.util.List;
 
@@ -19,8 +19,6 @@ import com.eos.security.api.service.EOSGroupService;
 import com.eos.security.api.service.EOSUserService;
 import com.eos.security.api.vo.EOSGroup;
 import com.eos.security.api.vo.EOSUser;
-import com.eos.security.impl.dao.EOSGroupDAO;
-import com.eos.security.impl.dao.EOSGroupUserDAO;
 import com.eos.security.impl.service.internal.EOSValidator;
 
 /**

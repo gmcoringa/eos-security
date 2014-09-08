@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.eos.security.impl.dao;
+package com.eos.security.impl.service.tenant;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -157,15 +157,15 @@ public class EOSTenantDAO {
 	private Map<String, Object> tenantAsMap(EOSTenant tenant) {
 		Map<String, Object> props = new HashMap<>(4);
 
-		if (!StringUtil.isEmpty(tenant.getAlias())) {
+		if (!StringUtil.isBlankOrNull(tenant.getAlias())) {
 			props.put("alias", tenant.getAlias());
 		}
 
-		if (!StringUtil.isEmpty(tenant.getName())) {
+		if (!StringUtil.isBlankOrNull(tenant.getName())) {
 			props.put("name", tenant.getName());
 		}
 
-		if (!StringUtil.isEmpty(tenant.getDescription())) {
+		if (!StringUtil.isBlankOrNull(tenant.getDescription())) {
 			props.put("description", tenant.getDescription());
 		}
 

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.eos.security.impl.dao;
+package com.eos.security.impl.service.permission;
 
 import org.springframework.stereotype.Repository;
 

@@ -30,7 +30,7 @@ import com.eos.security.api.service.EOSUserService;
 import com.eos.security.api.vo.EOSGroup;
 import com.eos.security.api.vo.EOSRole;
 import com.eos.security.api.vo.EOSUser;
-import com.eos.security.impl.dao.EOSUserTenantDAO;
+import com.eos.security.impl.service.user.EOSUserTenantDAO;
 import com.eos.security.impl.test.util.EOSTestUtil;
 
 /**

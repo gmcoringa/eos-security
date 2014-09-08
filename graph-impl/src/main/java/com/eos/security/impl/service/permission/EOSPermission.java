@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.eos.security.impl.service.permissions;
+package com.eos.security.impl.service.permission;
 
 import java.util.HashSet;
 import java.util.Set;

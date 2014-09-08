@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.eos.security.impl.service;
+package com.eos.security.impl.service.permission;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,9 +19,8 @@ import com.eos.security.api.exception.EOSUnauthorizedException;
 import com.eos.security.api.service.EOSGroupService;
 import com.eos.security.api.service.EOSPermissionService;
 import com.eos.security.api.service.EOSRoleService;
-import com.eos.security.impl.dao.EOSPermissionDAO;
-import com.eos.security.impl.dao.EOSRoleGroupDAO;
 import com.eos.security.impl.service.internal.EOSValidator;
+import com.eos.security.impl.service.role.EOSRoleGroupDAO;
 
 /**
  * Permission Service default implementation.

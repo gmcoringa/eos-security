@@ -264,10 +264,6 @@ public class EOSSecurityServiceImpl implements EOSSecurityService {
 			perms.add(EOSKnownPermissions.PERMISSION_TENAT_ALL);
 		}
 
-		for (String permission : permissions) {
-			perms.add(permission);
-		}
-
 		Map<String, Boolean> hasPerms = svcPermission
 				.hasPermissions(SessionContextManager.getCurrentUserLogin(), perms);
 		for (Boolean hasPerm : hasPerms.values()) {

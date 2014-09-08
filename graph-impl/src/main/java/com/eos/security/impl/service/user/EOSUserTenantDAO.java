@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.eos.security.impl.dao;
+package com.eos.security.impl.service.user;
 
 import java.util.HashMap;
 import java.util.Map;

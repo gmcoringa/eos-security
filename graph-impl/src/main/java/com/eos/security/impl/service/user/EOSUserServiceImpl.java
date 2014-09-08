@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.eos.security.impl.service;
+package com.eos.security.impl.service.user;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,9 +25,7 @@ import com.eos.security.api.service.EOSRoleService;
 import com.eos.security.api.service.EOSSecurityService;
 import com.eos.security.api.service.EOSUserService;
 import com.eos.security.api.vo.EOSUser;
-import com.eos.security.impl.dao.EOSUserDAO;
-import com.eos.security.impl.dao.EOSUserTenantDAO;
-import com.eos.security.impl.dao.EOSUserTenantDataDAO;
+import com.eos.security.impl.service.TransactionManager;
 import com.eos.security.impl.service.internal.EOSSystemConstants;
 import com.eos.security.impl.service.internal.EOSValidator;
 import com.eos.security.impl.session.SessionContextManager;

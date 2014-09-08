@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.eos.security.impl.service;
+package com.eos.security.impl.service.tenant;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -29,8 +29,7 @@ import com.eos.security.api.service.EOSTenantService;
 import com.eos.security.api.service.EOSUserService;
 import com.eos.security.api.vo.EOSTenant;
 import com.eos.security.api.vo.EOSUser;
-import com.eos.security.impl.dao.EOSTenantDAO;
-import com.eos.security.impl.dao.EOSTenantDataDAO;
+import com.eos.security.impl.service.TransactionManager;
 import com.eos.security.impl.service.internal.EOSSystemConstants;
 import com.eos.security.impl.service.internal.EOSValidator;
 import com.eos.security.impl.service.internal.RoleCreator;
@@ -223,12 +222,12 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 	 * @see com.eos.security.api.service.EOSTenantService#updateTenantData(java.lang.String, java.util.Map)
 	 */
 	@Override
-	public void updateTenantData(String tenantId, Map<String, String> tenantData) throws EOSForbiddenException,
+	public void updateTenantData(String tenantAlias, Map<String, String> tenantData) throws EOSForbiddenException,
 			EOSUnauthorizedException {
 		// checkTenantPermission(tenantId, "Tenant.Update.Data");
-		Set<String> keys = new HashSet<>(tenantData.keySet());
+		Set<String> keys = tenantData.keySet();
 		// Look for data that already exists
-		Map<String, String> dataFound = listTenantData(tenantId, keys);
+		Map<String, String> dataFound = listTenantData(tenantAlias, keys);
 		Set<String> remove = new HashSet<>();
 
 		transactionManager.begin();
@@ -236,12 +235,12 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 		log.debug("Starting Tenant data update ");
 		for (Entry<String, String> entry : dataFound.entrySet()) {
 			// Add removes to removal list
-			if (StringUtil.isEmpty(tenantData.get(entry.getKey()))) {
+			if (StringUtil.isBlankOrNull(tenantData.get(entry.getKey()))) {
 				remove.add(entry.getKey());
 				log.debug("Tenant data set for removal: " + entry.getKey());
 			} else {
 				// Update
-				tenantDataDAO.updateTenantData(tenantId, entry.getKey(), tenantData.get(entry.getKey()));
+				tenantDataDAO.updateTenantData(tenantAlias, entry.getKey(), tenantData.get(entry.getKey()));
 				log.debug("Tenant data [" + entry.getKey() + "] updated");
 			}
 			// Remove key pair value from tenantData map
@@ -249,11 +248,11 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 		}
 
 		// Add new data
-		addTenantData(tenantId, tenantData);
+		addTenantData(tenantAlias, tenantData);
 		// Remove removal list
 		if (!remove.isEmpty()) {
 			log.debug("Starting Tenant data removal ");
-			tenantDataDAO.deleteTenantData(tenantId, remove);
+			tenantDataDAO.deleteTenantData(tenantAlias, remove);
 		}
 
 		transactionManager.commit();
@@ -276,7 +275,7 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 
 		for (Entry<String, String> data : tenantData.entrySet()) {
 			// Skip empty keys or values
-			if (StringUtil.isEmpty(data.getKey()) || StringUtil.isEmpty(data.getValue())) {
+			if (StringUtil.isBlankOrNull(data.getKey()) || StringUtil.isBlankOrNull(data.getValue())) {
 				continue;
 			}
 
