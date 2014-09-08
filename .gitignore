@@ -6,6 +6,7 @@ target/
 reports/
 bin/
 .metadata/
+build/
 
 # Vim ignore files
 *.swp

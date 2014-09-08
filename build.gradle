@@ -1,0 +1,69 @@
+subprojects {
+	apply plugin: 'java'
+	apply plugin: 'eclipse-wtp'
+
+	group = 'eos-security'
+	version = '0.0.1'
+
+	repositories {
+	    mavenCentral()
+	}
+
+	sourceCompatibility = 1.7
+	targetCompatibility = 1.7
+
+}
+
+project(':common-util'){
+	description = 'Commons - Utitlies'
+}
+
+project(':api'){
+	dependencies {
+		compile project(':common-util')
+	}
+}
+
+project(':graph-impl'){
+	dependencies {
+
+		compile project(':common-util'), project(':api'),
+			'org.slf4j:slf4j-api:1.7.7', 'commons-codec:commons-codec:1.9',
+			'org.codehaus.jackson:jackson-core-asl:1.9.13', 'org.codehaus.jackson:jackson-mapper-asl:1.9.13',
+			'org.springframework:spring-core:3.2.10.RELEASE', 'org.springframework:spring-context:3.2.10.RELEASE', 
+			'org.springframework:spring-beans:3.2.10.RELEASE', 'org.springframework:spring-web:3.2.10.RELEASE',
+			'org.neo4j:neo4j:2.1.3'
+
+		testCompile 'junit:junit:4.11', 'org.mockito:mockito-core:1.9.5', 'org.neo4j:neo4j-kernel:2.1.3:tests',
+			'org.slf4j:slf4j-api:1.7.7', 
+			'org.codehaus.jackson:jackson-core-asl:1.9.13', 'org.codehaus.jackson:jackson-mapper-asl:1.9.13',
+			'org.springframework:spring-core:3.2.10.RELEASE', 'org.springframework:spring-context:3.2.10.RELEASE', 
+			'org.springframework:spring-beans:3.2.10.RELEASE', 'org.springframework:spring-web:3.2.10.RELEASE',
+			'org.neo4j:neo4j:2.1.3'
+	}
+}
+
+project(':web'){
+	apply plugin: 'war'
+
+	dependencies {
+
+		compile project(':common-util'), project(':api'),
+			'javax.ws.rs:javax.ws.rs-api:2.0', 
+			'org.slf4j:slf4j-api:1.7.7', 'org.scannotation:scannotation:1.0.3', 
+			'org.glassfish.jersey.containers:jersey-container-servlet:2.12', 'org.glassfish.jersey.ext:jersey-spring3:2.12',
+			'org.codehaus.jackson:jackson-core-asl:1.9.13', 'org.codehaus.jackson:jackson-mapper-asl:1.9.13',
+			'org.springframework:spring-core:3.2.10.RELEASE', 'org.springframework:spring-context:3.2.10.RELEASE', 
+			'org.springframework:spring-beans:3.2.10.RELEASE', 'org.springframework:spring-web:3.2.10.RELEASE',
+			'org.neo4j:neo4j:2.1.3'
+
+		providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
+
+		testCompile 'junit:junit:4.11', 'org.slf4j:slf4j-api:1.7.7', 'org.scannotation:scannotation:1.0.3', 
+			'org.glassfish.jersey.containers:jersey-container-servlet:2.12', 'org.glassfish.jersey.ext:jersey-spring3:2.12',
+			'org.codehaus.jackson:jackson-core-asl:1.9.13', 'org.codehaus.jackson:jackson-mapper-asl:1.9.13',
+			'org.springframework:spring-core:3.2.10.RELEASE', 'org.springframework:spring-context:3.2.10.RELEASE', 
+			'org.springframework:spring-beans:3.2.10.RELEASE', 'org.springframework:spring-web:3.2.10.RELEASE',
+			'org.neo4j:neo4j:2.1.3'
+	}
+}
