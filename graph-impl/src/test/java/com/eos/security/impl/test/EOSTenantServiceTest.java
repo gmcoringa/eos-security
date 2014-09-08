@@ -3,98 +3,144 @@
  */
 package com.eos.security.impl.test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.internal.util.collections.Sets;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.eos.common.EOSState;
 import com.eos.common.exception.EOSException;
 import com.eos.common.exception.EOSNotFoundException;
+import com.eos.common.exception.EOSValidationException;
+import com.eos.security.api.service.EOSPermissionService;
+import com.eos.security.api.service.EOSRoleService;
 import com.eos.security.api.service.EOSSecurityService;
 import com.eos.security.api.service.EOSTenantService;
 import com.eos.security.api.service.EOSUserService;
 import com.eos.security.api.vo.EOSTenant;
 import com.eos.security.api.vo.EOSUser;
+import com.eos.security.impl.dao.EOSTenantDAO;
+import com.eos.security.impl.dao.EOSTenantDataDAO;
+import com.eos.security.impl.service.EOSTenantServiceImpl;
+import com.eos.security.impl.service.TransactionManager;
 import com.eos.security.impl.test.util.EOSTestUtil;
 
 /**
  * @author santos.fabiano
  * 
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/spring-test.xml" })
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration(locations = { "/spring-test.xml" })
+@RunWith(MockitoJUnitRunner.class)
 public class EOSTenantServiceTest {
 
-	@Autowired
-	private ApplicationContext context;
-	@Autowired
-	private EOSTenantService svcTenant;
-	@Autowired
+	@Mock
+	private EOSTenantDAO tenantDAO;
+	@Mock
+	private EOSTenantDataDAO tenantDataDAO;
+	@Mock
 	private EOSUserService svcUser;
-	@Autowired
+	@Mock
 	private EOSSecurityService svcSecurity;
-
-	private EOSUser getUser(String tenantMail) {
+	@Mock
+	private EOSRoleService svcRole;
+	@Mock
+	private EOSPermissionService svcPermission;
+	@Mock
+	TransactionManager transactionManager;
+	
+	@InjectMocks
+	private EOSTenantService svcTenant = new EOSTenantServiceImpl();
+	
+	private EOSUser buildUser(String tenantMail) {
 		return new EOSUser().setLogin("test.user").setFirstName("Test").setLastName("User")
 				.setPersonalMail("test@personal.com").setEmail(tenantMail).setState(EOSState.ACTIVE);
 	}
-
-	@Before
-	public void setUp() throws EOSException {
-		// EOSTestUtil.setup(context);
-	}
 	
-	@AfterClass
-	public static void afterClass(){
-		EOSTestUtil.clearDataBase();
+	private EOSTenant buildTenant(String alias) {
+		return new EOSTenant().setAlias(alias).setName("Tenant name for" + alias)
+				.setDescription("Tenant description for " + alias);
 	}
 
 	// Tenant
 
-	@Test
-	public void testTenantCreate() throws EOSException {
-		EOSTenant tenant = new EOSTenant();
-		tenant.setAlias("test-create").setName("Test create tenant").setDescription("Create tenant description");
-		EOSUser admin = getUser("test@create.mail");
-		tenant = svcTenant.createTenant(tenant, null, admin);
-		Assert.assertNotNull("Create tenant", tenant.getAlias());
-		// Assert.assertNotNull("Create tenant - Admin User", svcUser.findTenantUser(admin.getLogin(), tenant.getId()));
+	@Test(expected = EOSValidationException.class)
+	public void shouldThrowEOSValidationExceptionWhenAliasIsInvalid() throws EOSException {
+		EOSTenant tenant = new EOSTenant().setAlias("test-create").setName("Test create tenant")
+				.setDescription("Create tenant description");
+		EOSUser admin = buildUser("test@create.mail");
+		EOSTenant createdTenant = svcTenant.createTenant(tenant, null, admin);
+
+		assertNotNull("Create tenant", createdTenant.getAlias());
+		assertEquals("Create tenant - state", tenant.getState(), createdTenant.getState());
 	}
 
 	@Test
-	public void testFindTenant() throws EOSException {
-		String alias = svcTenant.createTenant(
-				new EOSTenant().setAlias("test-find").setName("Test find tenant")
-						.setDescription("Test find description"), null, getUser("test@find.mail")).getAlias();
-		EOSTenant tenant = svcTenant.findTenant(alias);
-		Assert.assertNotNull("Find tenant: id not null", tenant.getAlias());
-		Assert.assertEquals("Find tenant id equals", tenant.getAlias(), alias);
+	public void shouldCreateTenantWithStateDisabled() throws EOSException {
+		EOSTenant tenant = new EOSTenant().setAlias("test-create").setName("Test create tenant")
+				.setDescription("Create tenant description");
+		EOSUser admin = buildUser("test@create.mail");
+		EOSTenant createdTenant = svcTenant.createTenant(tenant, null, admin);
+
+		assertNotNull("Create tenant", createdTenant.getAlias());
+		assertEquals("Create tenant - state", tenant.getState(), createdTenant.getState());
 	}
 
 	@Test
-	public void testFindTenants() throws EOSException {
-		Set<String> aliases = new HashSet<>(2);
-		aliases.add(svcTenant.createTenant(
-				new EOSTenant().setAlias("findtenants1").setName("Test find tenants 1")
-						.setDescription("Test find description"), null, getUser("test@find1.mail")).getAlias());
-		aliases.add(svcTenant.createTenant(
-				new EOSTenant().setAlias("findtenants2").setName("Test find tenants 2")
-						.setDescription("Test find description"), null, getUser("test@find2.mail")).getAlias());
-		Set<EOSTenant> tenants = svcTenant.findTenants(aliases);
-		Assert.assertEquals("Find tenants size", 2, tenants.size());
+	public void shouldCreateTenantWithUnchangedState() throws EOSException {
+		EOSTenant tenant = new EOSTenant().setAlias("test-create").setName("Test create tenant")
+				.setDescription("Create tenant description").setState(EOSState.ACTIVE);
+		EOSUser admin = buildUser("test@create.mail");
+		EOSTenant createdTenant = svcTenant.createTenant(tenant, null, admin);
+
+		assertNotNull("Create tenant", tenant.getAlias());
+		assertEquals("Create tenant", tenant, createdTenant);
+	}
+	
+	@Test
+	public void shouldFindTenantWhenItExists() throws EOSException {
+		String tenantAlias = "test-find";
+		EOSTenant tenant = buildTenant(tenantAlias);
+		when(tenantDAO.find(tenantAlias)).thenReturn(tenant);
+		EOSTenant found = svcTenant.findTenant(tenantAlias);
+		
+		assertEquals("Find tenant id equals", tenant, found);
+	}
+	
+	@Test(expected = EOSNotFoundException.class)
+	public void shouldThrowEOSNotFoundExceptionWhenTenantDosNotExists(){
+		svcTenant.findTenant("test-find");
 	}
 
+	@Test
+	public void shouldFindMultipleTenants() throws EOSException {
+		Set<String> aliases = Sets.newSet("findTenant1", "findTenant2");
+		Set<EOSTenant> tenants = Sets.newSet(buildTenant("findTenant1"), buildTenant("findTenant2"));
+		when(tenantDAO.findTenants(aliases)).thenReturn(tenants);
+		Set<EOSTenant> tenantsFound = svcTenant.findTenants(aliases);
+		
+		assertEquals("Find tenants size", tenants.size(), tenantsFound.size());
+		Assert.assertTrue("Find Tenants contains all", tenants.containsAll(tenantsFound));
+	}
+
+	/*
 	@Test
 	public void testListTenants() throws EOSException {
 		Set<EOSTenant> createds = new HashSet<>(2);
@@ -269,5 +315,5 @@ public class EOSTenantServiceTest {
 			EOSTestUtil.setup(context);
 		}
 	}
-
+*/
 }

@@ -16,7 +16,7 @@ import com.eos.security.impl.dao.EOSTenantDAO;
 import com.eos.security.impl.dao.EOSTenantDataDAO;
 import com.eos.security.impl.dao.EOSUserDAO;
 import com.eos.security.impl.dao.EOSUserTenantDAO;
-import com.eos.security.impl.service.internal.TransactionManagerImpl;
+import com.eos.security.impl.service.TransactionManager;
 
 /**
  * @author fabiano.santos
@@ -26,11 +26,10 @@ public class SchemaUtil {
 
 	private static final Logger log = LoggerFactory.getLogger(SchemaUtil.class);
 
-	public static void createSchema() {
-		TransactionManagerImpl manager = TransactionManagerImpl.transactionManager();
-		manager.begin();
+	public static void createSchema(TransactionManager transactionManager) {
+		transactionManager.begin();
 		try {
-			Schema schema = manager.graphDB().schema();
+			Schema schema = transactionManager.graphDB().schema();
 			// Tenant
 			createConstraint(schema, EOSTenantDAO.label, CollectionUtil.asSet("alias"));
 			createIndex(schema, EOSTenantDAO.label, CollectionUtil.asSet("state"));
@@ -41,7 +40,7 @@ public class SchemaUtil {
 			createConstraint(schema, EOSUserDAO.label, CollectionUtil.asSet("login"));
 			createConstraint(schema, EOSUserTenantDAO.label, CollectionUtil.asSet("login"));
 		} finally {
-			manager.commit();
+			transactionManager.commit();
 		}
 	}
 

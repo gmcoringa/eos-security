@@ -9,31 +9,43 @@ import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.kernel.impl.util.StringLogger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.WebApplicationContext;
 
-import com.eos.security.api.service.TransactionManager;
+import com.eos.security.impl.service.DataBaseServer;
+import com.eos.security.impl.service.TransactionManager;
 
 /**
  * @author fabiano.santos
  * 
  */
-public class TransactionManagerImpl implements TransactionManager {
-
-	private static ThreadLocal<TransactionManager> instance = new ThreadLocal<>();
+@Component
+@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.INTERFACES)
+public class TransactionManagerImpl implements com.eos.security.impl.service.TransactionManager {
 
 	private final GraphDatabaseService graphDB;
 	private final ExecutionEngine engine;
-	private Transaction transaction;
 	private final AtomicInteger transactionCounter = new AtomicInteger();
+	private Transaction transaction;
 
-	public TransactionManagerImpl() {
-		graphDB = DataBaseServer.get();
+	private final DataBaseServer dataBaseServer;
+
+	@Autowired
+	public TransactionManagerImpl(DataBaseServer server){
+		dataBaseServer = server;
+		graphDB = dataBaseServer.get();
 		engine = new ExecutionEngine(graphDB, StringLogger.SYSTEM);
 	}
 
+	@Override
 	public GraphDatabaseService graphDB() {
 		return graphDB;
 	}
 
+	@Override
 	public ExecutionEngine executionEngine() {
 		return engine;
 	}
@@ -97,25 +109,6 @@ public class TransactionManagerImpl implements TransactionManager {
 	@Override
 	public boolean isOpen() {
 		return transactionCounter.get() > 0;
-	}
-
-	public static synchronized TransactionManager get() {
-		TransactionManager tm = instance.get();
-		if (tm == null) {
-			tm = new TransactionManagerImpl();
-			instance.set(tm);
-		}
-
-		return tm;
-	}
-
-	/**
-	 * Retrieve transaction manager internal implementation instance.
-	 * 
-	 * @return TransactionManager implementation.
-	 */
-	public static TransactionManagerImpl transactionManager() {
-		return (TransactionManagerImpl) TransactionManagerImpl.get();
 	}
 
 }

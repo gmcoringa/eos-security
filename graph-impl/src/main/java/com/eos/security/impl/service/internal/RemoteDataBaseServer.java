@@ -3,10 +3,15 @@
  */
 package com.eos.security.impl.service.internal;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.eos.security.impl.service.DataBaseServer;
 
 /**
  * shutdown listener. Close graph database instance.
@@ -14,23 +19,27 @@ import org.slf4j.LoggerFactory;
  * @author fabiano.santos
  * 
  */
-public class DataBaseServer {
+public class RemoteDataBaseServer implements DataBaseServer {
 
-	private static GraphDatabaseService graphService;
-	private static final Logger log = LoggerFactory.getLogger(DataBaseServer.class);
+	private GraphDatabaseService graphService;
+	private static final Logger log = LoggerFactory.getLogger(RemoteDataBaseServer.class);
 
-	public static void init() {
+	@PostConstruct
+	public void init() {
 		log.info("### Initializing Graph database server ###");
-		graphService = new GraphDatabaseFactory().newEmbeddedDatabase("target/graph");
+		graphService = new GraphDatabaseFactory().newEmbeddedDatabase("build/graph");
 		log.info("### Graph database server UP ###");
 	}
 
-	public static void shutdown() {
+	@PreDestroy
+	public void shutdown() {
+		log.info("### Shutingdown Graph database ###");
 		graphService.shutdown();
 		log.info("### Graph database shutdown complete ###");
 	}
 
-	public static GraphDatabaseService get() {
+	@Override
+	public GraphDatabaseService get() {
 		return graphService;
 	}
 }

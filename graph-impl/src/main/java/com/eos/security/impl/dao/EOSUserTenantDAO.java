@@ -10,10 +10,11 @@ import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.eos.security.api.vo.EOSUser;
-import com.eos.security.impl.service.internal.TransactionManagerImpl;
+import com.eos.security.impl.service.TransactionManager;
 import com.eos.security.impl.service.util.ReflectionUtil;
 
 /**
@@ -36,19 +37,21 @@ public class EOSUserTenantDAO {
 	private static final String QUERY_FIND = "MATCH (tenant:Tenant{alias: {tenantAlias}})"
 			+ "-[:CONNECTED_USER]->(userTenant:UserTenant{login: {login}}) RETURN userTenant ";
 
+	@Autowired
+	TransactionManager transactionManager;
+
 	public EOSUser createUser(EOSUser user) {
 		Map<String, Object> params = userAsMap(user);
 		String userTenantId = userTenantId(user.getLogin(), user.getTenantAlias());
 
-		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
-				.execute(QUERY_CREATE, params).columnAs("n")) {
+		try (ResourceIterator<Node> result = transactionManager.executionEngine().execute(QUERY_CREATE, params)
+				.columnAs("n")) {
 			if (result.hasNext()) {
 				params.clear();
 				params.put("userTenantId", userTenantId);
 				params.put("tenantAlias", user.getTenantAlias());
 				// Create relation
-				TransactionManagerImpl.transactionManager().executionEngine()
-						.execute(QUERY_CREATE_USER_TENANT_RELATION, params);
+				transactionManager.executionEngine().execute(QUERY_CREATE_USER_TENANT_RELATION, params);
 				return user;
 			} else {
 				return null;
@@ -62,8 +65,8 @@ public class EOSUserTenantDAO {
 		params.put("tenantAlias", tenantAlias);
 		params.put("login", login);
 
-		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
-				.execute(QUERY_FIND, params).columnAs("userTenant")) {
+		try (ResourceIterator<Node> result = transactionManager.executionEngine().execute(QUERY_FIND, params)
+				.columnAs("userTenant")) {
 			if (result.hasNext()) {
 				return ReflectionUtil.convert(result.next(), EOSUser.class);
 			} else {

@@ -12,12 +12,13 @@ import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.eos.common.EOSState;
 import com.eos.common.util.StringUtil;
 import com.eos.security.api.vo.EOSTenant;
-import com.eos.security.impl.service.internal.TransactionManagerImpl;
+import com.eos.security.impl.service.TransactionManager;
 import com.eos.security.impl.service.util.ReflectionUtil;
 
 /**
@@ -42,9 +43,12 @@ public class EOSTenantDAO {
 			+ "ORDER BY tenant.name SKIP {skip} LIMIT {limit} ";
 	private static final String QUERY_PURGE = "MATCH (tenant:Tenant{alias: {alias}}) OPTIONAL MATCH (tenant)-[r]-() DELETE tenant, r";
 
+	@Autowired
+	TransactionManager transactionManager;
+	
 	public EOSTenant create(EOSTenant tenant) {
 
-		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
+		try (ResourceIterator<Node> result = transactionManager.executionEngine()
 				.execute(QUERY_CREATE, tenantAsMap(tenant)).columnAs("n")) {
 			if (result.hasNext()) {
 				return ReflectionUtil.convert(result.next(), EOSTenant.class);
@@ -59,7 +63,7 @@ public class EOSTenantDAO {
 		Map<String, Object> params = new HashMap<>(1);
 		params.put("alias", alias);
 
-		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
+		try (ResourceIterator<Node> result = transactionManager.executionEngine()
 				.execute(QUERY_FIND, params).columnAs("tenant")) {
 			if (result.hasNext()) {
 				return ReflectionUtil.convert(result.next(), EOSTenant.class);
@@ -75,7 +79,7 @@ public class EOSTenantDAO {
 		params.put("name", tenant.getName());
 		params.put("description", tenant.getDescription());
 
-		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
+		try (ResourceIterator<Node> result = transactionManager.executionEngine()
 				.execute(QUERY_UPDATE, params).columnAs("tenant")) {
 			if (result.hasNext()) {
 				return ReflectionUtil.convert(result.next(), EOSTenant.class);
@@ -90,7 +94,7 @@ public class EOSTenantDAO {
 		params.put("alias", alias);
 		params.put("state", state.name());
 
-		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
+		try (ResourceIterator<Node> result = transactionManager.executionEngine()
 				.execute(QUERY_UPDATE_STATE, params).columnAs("tenant")) {
 			if (result.hasNext()) {
 				return ReflectionUtil.convert(result.next(), EOSTenant.class);
@@ -115,7 +119,7 @@ public class EOSTenantDAO {
 		params.put("limit", limit);
 		params.put("skip", offset);
 
-		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
+		try (ResourceIterator<Node> result = transactionManager.executionEngine()
 				.execute(query, params).columnAs("tenant")) {
 			while (result.hasNext()) {
 				tenants.add(ReflectionUtil.convert(result.next(), EOSTenant.class));
@@ -128,7 +132,7 @@ public class EOSTenantDAO {
 	public void purgeTenant(String alias) {
 		Map<String, Object> params = new HashMap<>(1);
 		params.put("alias", alias);
-		TransactionManagerImpl.transactionManager().executionEngine().execute(QUERY_PURGE, params);
+		transactionManager.executionEngine().execute(QUERY_PURGE, params);
 	}
 
 	public Set<EOSTenant> findTenants(Set<String> aliases) {
@@ -136,7 +140,7 @@ public class EOSTenantDAO {
 		params.put("aliases", aliases);
 		Set<EOSTenant> tenants = new HashSet<>(aliases.size());
 
-		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
+		try (ResourceIterator<Node> result = transactionManager.executionEngine()
 				.execute(QUERY_FIND_BY_ALIASES, params).columnAs("tenant")) {
 			while (result.hasNext()) {
 				tenants.add(ReflectionUtil.convert(result.next(), EOSTenant.class));

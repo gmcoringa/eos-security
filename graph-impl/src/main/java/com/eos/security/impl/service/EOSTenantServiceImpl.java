@@ -27,7 +27,6 @@ import com.eos.security.api.service.EOSRoleService;
 import com.eos.security.api.service.EOSSecurityService;
 import com.eos.security.api.service.EOSTenantService;
 import com.eos.security.api.service.EOSUserService;
-import com.eos.security.api.service.TransactionManager;
 import com.eos.security.api.vo.EOSTenant;
 import com.eos.security.api.vo.EOSUser;
 import com.eos.security.impl.dao.EOSTenantDAO;
@@ -36,7 +35,6 @@ import com.eos.security.impl.service.internal.EOSSystemConstants;
 import com.eos.security.impl.service.internal.EOSValidator;
 import com.eos.security.impl.service.internal.RoleCreator;
 import com.eos.security.impl.service.internal.RoleCreatorFactory;
-import com.eos.security.impl.service.internal.TransactionManagerImpl;
 import com.eos.security.impl.session.SessionContextManager;
 
 /**
@@ -58,6 +56,8 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 	private EOSRoleService svcRole;
 	@Autowired
 	private EOSPermissionService svcPermission;
+	@Autowired
+	TransactionManager transactionManager;
 
 	private static final Logger log = LoggerFactory.getLogger(EOSTenantServiceImpl.class);
 
@@ -73,17 +73,17 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 			throws EOSDuplicatedEntryException, EOSForbiddenException, EOSUnauthorizedException, EOSValidationException {
 		EOSValidator.validateTenant(tenant);
 		// svcSecurity.checkPermissions(true, false, "Tenant.Create");
-		TransactionManager manager = TransactionManagerImpl.get().begin();
+		transactionManager.begin();
 
 		// Set default state only if state is null
 		if (tenant.getState() == null) {
 			tenant.setState(EOSState.DISABLED);
 		}
 
-		tenant = tenantDAO.create(tenant);
+		tenantDAO.create(tenant);
 		// Create meta data
 		addTenantData(tenant.getAlias(), data);
-		manager.commit();
+		transactionManager.commit();
 		// // Create administrator user with new tenant
 		// try {
 		// log.debug("Creating administrator for tenant " + tenant.getName());
@@ -138,9 +138,9 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 	@Override
 	public EOSTenant findTenant(String alias) throws EOSNotFoundException {
 		// TODO cache
-		TransactionManager manager = TransactionManagerImpl.get().begin();
+		transactionManager.begin();
 		EOSTenant tenant = tenantDAO.find(alias);
-		manager.commit();
+		transactionManager.commit();
 
 		if (tenant == null) {
 			throw new EOSNotFoundException("Tenant not found, alias: " + alias);
@@ -155,9 +155,9 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 	@Override
 	public Set<EOSTenant> findTenants(Set<String> aliases) {
 		// TODO cache
-		TransactionManager manager = TransactionManagerImpl.get().begin();
+		transactionManager.begin();
 		Set<EOSTenant> tenants = tenantDAO.findTenants(aliases);
-		manager.commit();
+		transactionManager.commit();
 		return tenants;
 	}
 
@@ -167,9 +167,9 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 	@Override
 	public Set<EOSTenant> listTenants(Set<EOSState> states, int limit, int offset) {
 		// TODO permission check for state != ACTIVE
-		TransactionManager manager = TransactionManagerImpl.get().begin();
+		transactionManager.begin();
 		Set<EOSTenant> tenants = tenantDAO.listTenants(states, limit, offset);
-		manager.commit();
+		transactionManager.commit();
 		return tenants;
 	}
 
@@ -182,9 +182,9 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 		EOSValidator.validateTenant(tenant);
 		// checkTenantPermission(tenant.getId(), "Tenant.Update");
 
-		TransactionManager manager = TransactionManagerImpl.get().begin();
+		transactionManager.begin();
 		tenantDAO.update(tenant);
-		manager.commit();
+		transactionManager.commit();
 		log.debug("Tenant updated: " + tenant.toString());
 		// TODO messaging
 	}
@@ -196,9 +196,9 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 	public void updateTenantState(String alias, EOSState state) throws EOSForbiddenException, EOSUnauthorizedException,
 			EOSNotFoundException {
 		// svcSecurity.checkPermissions(true, false, "Tenant.Update.State");
-		TransactionManager manager = TransactionManagerImpl.get().begin();
+		transactionManager.begin();
 		tenantDAO.update(alias, state);
-		manager.commit();
+		transactionManager.commit();
 		log.debug("Tenant state updated to " + state.name());
 		// TODO messaging
 	}
@@ -209,9 +209,9 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 	@Override
 	public void purgeTenant(String alias) throws EOSForbiddenException, EOSUnauthorizedException {
 		// svcSecurity.checkPermissions(true, false, "Tenant.Delete");
-		TransactionManager manager = TransactionManagerImpl.get().begin();
+		transactionManager.begin();
 		tenantDAO.purgeTenant(alias);
-		manager.commit();
+		transactionManager.commit();
 		log.info("Tenant purged :" + alias);
 	}
 
@@ -231,7 +231,7 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 		Map<String, String> dataFound = listTenantData(tenantId, keys);
 		Set<String> remove = new HashSet<>();
 
-		TransactionManager manager = TransactionManagerImpl.get().begin();
+		transactionManager.begin();
 		// Updates
 		log.debug("Starting Tenant data update ");
 		for (Entry<String, String> entry : dataFound.entrySet()) {
@@ -256,7 +256,7 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 			tenantDataDAO.deleteTenantData(tenantId, remove);
 		}
 
-		manager.commit();
+		transactionManager.commit();
 		// TODO Remove tenant data cache using keys variable
 	}
 
@@ -290,9 +290,9 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 	@Override
 	public String findTenantData(String tenantAlias, String key) throws EOSForbiddenException, EOSUnauthorizedException {
 		// checkTenantPermission(tenantId, "Tenant.View.Data");
-		TransactionManager manager = TransactionManagerImpl.get().begin();
+		transactionManager.begin();
 		String value = tenantDataDAO.findTenantDataValue(tenantAlias, key);
-		manager.commit();
+		transactionManager.commit();
 		return value;
 	}
 
@@ -303,9 +303,9 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 	public Map<String, String> listTenantData(String tenantAlias, Set<String> keys) throws EOSForbiddenException,
 			EOSUnauthorizedException {
 		// checkTenantPermission(tenantId, "Tenant.View.Data");
-		TransactionManager manager = TransactionManagerImpl.get().begin();
+		transactionManager.begin();
 		Map<String, String> metas = tenantDataDAO.findTenantDataValues(tenantAlias, keys);
-		manager.commit();
+		transactionManager.commit();
 		return metas;
 	}
 
@@ -316,9 +316,9 @@ public class EOSTenantServiceImpl implements EOSTenantService {
 	public Map<String, String> listTenantData(String tenantAlias, int limit, int offset) throws EOSForbiddenException,
 			EOSUnauthorizedException {
 		// checkTenantPermission(tenantId, "Tenant.View.Data");
-		TransactionManager manager = TransactionManagerImpl.get().begin();
+		transactionManager.begin();
 		Map<String, String> metas = tenantDataDAO.listTenantData(tenantAlias, limit, offset);
-		manager.commit();
+		transactionManager.commit();
 		return metas;
 	}
 

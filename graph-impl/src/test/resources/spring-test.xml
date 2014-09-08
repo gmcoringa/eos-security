@@ -14,5 +14,9 @@
 	<!-- Dependency Injection -->
 	<context:annotation-config />
 	<context:component-scan base-package="com.eos.security.impl" />
+	
+	 <bean id="dataBaseServer" class="com.eos.security.impl.test.util.TestDataBaseServer">
+    </bean>
+	
 
 </beans>

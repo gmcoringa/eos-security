@@ -167,11 +167,4 @@ public interface EOSSecurityService {
 	public void checkPermissions(boolean verifyLoggedUser, boolean verifyHierarchical, String... permissions)
 			throws EOSForbiddenException, EOSUnauthorizedException;
 
-	/**
-	 * Retrieve the transaction manager for the current context. The transaction manager is a thread safe object.
-	 * 
-	 * @return The transaction manager for the current context.
-	 */
-	public TransactionManager transactionManager();
-
 }

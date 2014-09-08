@@ -24,14 +24,12 @@ import com.eos.security.api.service.EOSGroupService;
 import com.eos.security.api.service.EOSRoleService;
 import com.eos.security.api.service.EOSSecurityService;
 import com.eos.security.api.service.EOSUserService;
-import com.eos.security.api.service.TransactionManager;
 import com.eos.security.api.vo.EOSUser;
 import com.eos.security.impl.dao.EOSUserDAO;
 import com.eos.security.impl.dao.EOSUserTenantDAO;
 import com.eos.security.impl.dao.EOSUserTenantDataDAO;
 import com.eos.security.impl.service.internal.EOSSystemConstants;
 import com.eos.security.impl.service.internal.EOSValidator;
-import com.eos.security.impl.service.internal.TransactionManagerImpl;
 import com.eos.security.impl.session.SessionContextManager;
 
 /**
@@ -57,6 +55,8 @@ public class EOSUserServiceImpl implements EOSUserService {
 	private EOSGroupService svcGroup;
 	@Autowired
 	private EOSRoleService svcRole;
+	@Autowired
+	TransactionManager transactionManager;
 
 	/**
 	 * @see com.eos.security.api.service.EOSUserService#createUser(com.eos.security.api.vo.EOSUser, Map)
@@ -65,7 +65,7 @@ public class EOSUserServiceImpl implements EOSUserService {
 	public EOSUser createUser(EOSUser user, Map<String, String> userData) throws EOSDuplicatedEntryException,
 			EOSForbiddenException, EOSUnauthorizedException, EOSValidationException {
 		// TODO security
-		TransactionManager manager = TransactionManagerImpl.get().begin();
+		transactionManager.begin();
 		// Override tenant alias
 		user.setTenantAlias(SessionContextManager.getCurrentTenantAlias());
 		EOSValidator.validateUser(user);
@@ -97,7 +97,7 @@ public class EOSUserServiceImpl implements EOSUserService {
 			svcRole.addRolesToUser(user.getLogin(), Arrays.asList(EOSSystemConstants.ROLE_TENANT_USER));
 		}
 
-		manager.commit();
+		transactionManager.commit();
 		return user;
 	}
 
@@ -106,9 +106,9 @@ public class EOSUserServiceImpl implements EOSUserService {
 	 */
 	@Override
 	public EOSUser findUser(String login) throws EOSNotFoundException {
-		TransactionManager manager = TransactionManagerImpl.get().begin();
+		transactionManager.begin();
 		EOSUser user = findTenantUser(login, SessionContextManager.getCurrentTenantAlias());
-		manager.commit();
+		transactionManager.commit();
 		return user;
 	}
 
@@ -118,9 +118,9 @@ public class EOSUserServiceImpl implements EOSUserService {
 	@Override
 	public EOSUser findTenantUser(String login, String tenantAlias) throws EOSNotFoundException {
 		// TODO Validations, cache and security
-		TransactionManager manager = TransactionManagerImpl.get().begin();
+		transactionManager.begin();
 		EOSUser user = compose(userTenantDAO.findByLogin(login, tenantAlias), userDAO.findUser(login));
-		manager.commit();
+		transactionManager.commit();
 		return user;
 	}
 

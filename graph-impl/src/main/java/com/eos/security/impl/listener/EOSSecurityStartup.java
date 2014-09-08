@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import com.eos.common.EOSState;
 import com.eos.common.EOSUserType;
-import com.eos.security.api.service.TransactionManager;
 import com.eos.security.api.vo.EOSRole;
 import com.eos.security.api.vo.EOSTenant;
 import com.eos.security.api.vo.EOSUser;
@@ -24,7 +23,8 @@ import com.eos.security.impl.dao.EOSRoleUserDAO;
 import com.eos.security.impl.dao.EOSTenantDAO;
 import com.eos.security.impl.dao.EOSUserDAO;
 import com.eos.security.impl.dao.EOSUserTenantDAO;
-import com.eos.security.impl.service.internal.DataBaseServer;
+import com.eos.security.impl.service.DataBaseServer;
+import com.eos.security.impl.service.TransactionManager;
 import com.eos.security.impl.service.internal.EOSSystemConstants;
 import com.eos.security.impl.service.internal.TransactionManagerImpl;
 
@@ -40,6 +40,8 @@ public class EOSSecurityStartup implements ApplicationListener<ContextRefreshedE
 	private static final Logger log = LoggerFactory.getLogger(EOSSecurityStartup.class);
 
 	@Autowired
+	DataBaseServer dataBaseServer;
+	@Autowired
 	private EOSTenantDAO tenantDAO;
 	@Autowired
 	private EOSUserDAO userDAO;
@@ -51,6 +53,8 @@ public class EOSSecurityStartup implements ApplicationListener<ContextRefreshedE
 	private EOSRoleUserDAO roleUserDAO;
 	@Autowired
 	private EOSPermissionDAO permissionDAO;
+	@Autowired
+	private TransactionManager transactionManager;
 
 	/**
 	 * @see org.springframework.context.ApplicationListener#onApplicationEvent(org.springframework.context.ApplicationEvent)
@@ -61,16 +65,14 @@ public class EOSSecurityStartup implements ApplicationListener<ContextRefreshedE
 		// Register shutdown hook
 		AbstractApplicationContext context = (AbstractApplicationContext) contextEvent.getApplicationContext();
 		context.registerShutdownHook();
-		// Initialize database and schema
-		DataBaseServer.init();
-		SchemaUtil.createSchema();
+		SchemaUtil.createSchema(transactionManager);
 
-		TransactionManager manager = TransactionManagerImpl.get().begin();
+		transactionManager.begin();
 		// Manually create tenant to avoid security checks
 		createTenant();
 		// Manually create default users and roles to avoid security checks
 		createUsers();
-		manager.commit();
+		transactionManager.commit();
 		log.info("### EOS-Security startup complete ###");
 	}
 

@@ -25,13 +25,11 @@ import com.eos.security.api.service.EOSPermissionService;
 import com.eos.security.api.service.EOSSecurityService;
 import com.eos.security.api.service.EOSTenantService;
 import com.eos.security.api.service.EOSUserService;
-import com.eos.security.api.service.TransactionManager;
 import com.eos.security.api.session.SessionContext;
 import com.eos.security.api.vo.EOSTenant;
 import com.eos.security.api.vo.EOSUser;
 import com.eos.security.impl.service.internal.EOSKnownPermissions;
 import com.eos.security.impl.service.internal.EOSSystemConstants;
-import com.eos.security.impl.service.internal.TransactionManagerImpl;
 import com.eos.security.impl.session.EOSSession;
 import com.eos.security.impl.session.SessionContextManager;
 
@@ -281,13 +279,5 @@ public class EOSSecurityServiceImpl implements EOSSecurityService {
 
 		// Still in this method, no permissions found
 		throw new EOSForbiddenException("User is not allowed");
-	}
-
-	/**
-	 * @see com.eos.security.api.service.EOSSecurityService#transactionManager()
-	 */
-	@Override
-	public TransactionManager transactionManager() {
-		return TransactionManagerImpl.get();
 	}
 }

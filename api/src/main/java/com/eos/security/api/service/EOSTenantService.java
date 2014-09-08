@@ -53,7 +53,7 @@ public interface EOSTenantService {
 	 * 
 	 * @param alias
 	 * @return the tenant.
-	 * @throws EOSValidationException
+	 * @throws EOSNotFoundException
 	 *             If no tenant exists with the given tenant alias.
 	 */
 	public EOSTenant findTenant(String alias) throws EOSNotFoundException;

@@ -10,11 +10,12 @@ import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.eos.common.util.StringUtil;
 import com.eos.security.api.vo.EOSUser;
-import com.eos.security.impl.service.internal.TransactionManagerImpl;
+import com.eos.security.impl.service.TransactionManager;
 import com.eos.security.impl.service.util.ReflectionUtil;
 
 /**
@@ -32,11 +33,14 @@ public class EOSUserDAO {
 			+ "personalMail: {personalMail}, type: {type}}) ON CREATE SET n.created = timestamp(), n.lastUpdate = timestamp() RETURN n";
 	private static final String QUERY_FIND = "MATCH (user:User{login : {login}}) RETURN user ";
 
+	@Autowired
+	TransactionManager transactionManager;
+
 	public EOSUser findUser(String login) {
 		Map<String, Object> params = new HashMap<>(1);
 		params.put("login", login);
 
-		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
+		try (ResourceIterator<Node> result = transactionManager.executionEngine()
 				.execute(QUERY_FIND, params).columnAs("user")) {
 			if (result.hasNext()) {
 				return ReflectionUtil.convert(result.next(), EOSUser.class);
@@ -47,7 +51,7 @@ public class EOSUserDAO {
 	}
 
 	public EOSUser createUser(EOSUser user, String password) {
-		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
+		try (ResourceIterator<Node> result = transactionManager.executionEngine()
 				.execute(QUERY_CREATE, userAsMap(user, password)).columnAs("n")) {
 			if (result.hasNext()) {
 				return ReflectionUtil.convert(result.next(), EOSUser.class);

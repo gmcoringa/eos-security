@@ -14,9 +14,10 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.eos.security.impl.service.internal.TransactionManagerImpl;
+import com.eos.security.impl.service.TransactionManager;
 
 /**
  * @author santos.fabiano
@@ -47,6 +48,9 @@ public class EOSTenantDataDAO {
 	private static final String QUERY_FIND_ALL = "MATCH (tenant:Tenant{alias: {tenantAlias}})-[:HAS_META]->(meta:TenantData) "
 			+ "RETURN meta ORDER BY meta.key SKIP {skip} LIMIT {limit} ";
 
+	@Autowired
+	TransactionManager transactionManager;
+
 	public void createTenantData(String tenantAlias, String key, String value) {
 		Map<String, Object> params = new HashMap<>(4);
 		String metaId = metaId(tenantAlias, key);
@@ -56,13 +60,13 @@ public class EOSTenantDataDAO {
 		params.put("tenantAlias", tenantAlias);
 
 		// Create node
-		TransactionManagerImpl.transactionManager().executionEngine().execute(QUERY_CREATE, params);
+		transactionManager.executionEngine().execute(QUERY_CREATE, params);
 
 		params.clear();
 		params.put("metaId", metaId);
 		params.put("tenantAlias", tenantAlias);
 		// Create relation
-		TransactionManagerImpl.transactionManager().executionEngine().execute(QUERY_CREATE_META_RELATION, params);
+		transactionManager.executionEngine().execute(QUERY_CREATE_META_RELATION, params);
 	}
 
 	public void updateTenantData(String tenantAlias, String key, String value) {
@@ -71,8 +75,7 @@ public class EOSTenantDataDAO {
 		params.put("key", key);
 		params.put("value", value);
 
-		ExecutionResult result = TransactionManagerImpl.transactionManager().executionEngine()
-				.execute(QUERY_UPDATE, params);
+		ExecutionResult result = transactionManager.executionEngine().execute(QUERY_UPDATE, params);
 		log.debug("Tenant[" + tenantAlias + "] updated data: " + result.dumpToString());
 	}
 
@@ -80,8 +83,7 @@ public class EOSTenantDataDAO {
 		Map<String, Object> params = new HashMap<>(2);
 		params.put("tenantAlias", tenantAlias);
 		params.put("key", keys);
-		ExecutionResult result = TransactionManagerImpl.transactionManager().executionEngine()
-				.execute(QUERY_PURGE, params);
+		ExecutionResult result = transactionManager.executionEngine().execute(QUERY_PURGE, params);
 		log.debug("Tenant[" + tenantAlias + "] deleted data: " + result.dumpToString());
 	}
 
@@ -91,8 +93,8 @@ public class EOSTenantDataDAO {
 		params.put("tenantAlias", tenantAlias);
 		params.put("key", key);
 
-		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
-				.execute(QUERY_FIND_BY_KEY, params).columnAs("meta")) {
+		try (ResourceIterator<Node> result = transactionManager.executionEngine().execute(QUERY_FIND_BY_KEY, params)
+				.columnAs("meta")) {
 			if (result.hasNext()) {
 				return (String) result.next().getProperty("value");
 			} else {
@@ -108,8 +110,8 @@ public class EOSTenantDataDAO {
 		params.put("tenantAlias", tenantAlias);
 		params.put("key", keys);
 
-		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
-				.execute(QUERY_FIND_BY_KEYS, params).columnAs("meta")) {
+		try (ResourceIterator<Node> result = transactionManager.executionEngine().execute(QUERY_FIND_BY_KEYS, params)
+				.columnAs("meta")) {
 			while (result.hasNext()) {
 				Node node = result.next();
 				metas.put((String) node.getProperty("key"), (String) node.getProperty("value"));
@@ -127,8 +129,8 @@ public class EOSTenantDataDAO {
 		params.put("skip", offset);
 		params.put("limit", limit);
 
-		try (ResourceIterator<Node> result = TransactionManagerImpl.transactionManager().executionEngine()
-				.execute(QUERY_FIND_ALL, params).columnAs("meta")) {
+		try (ResourceIterator<Node> result = transactionManager.executionEngine().execute(QUERY_FIND_ALL, params)
+				.columnAs("meta")) {
 			while (result.hasNext()) {
 				Node node = result.next();
 				metas.put((String) node.getProperty("key"), (String) node.getProperty("value"));

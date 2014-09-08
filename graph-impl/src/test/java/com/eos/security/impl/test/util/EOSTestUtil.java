@@ -19,13 +19,12 @@ import com.eos.security.api.service.EOSGroupService;
 import com.eos.security.api.service.EOSRoleService;
 import com.eos.security.api.service.EOSTenantService;
 import com.eos.security.api.service.EOSUserService;
-import com.eos.security.api.service.TransactionManager;
 import com.eos.security.api.session.SessionContext;
 import com.eos.security.api.vo.EOSGroup;
 import com.eos.security.api.vo.EOSRole;
 import com.eos.security.api.vo.EOSUser;
+import com.eos.security.impl.service.TransactionManager;
 import com.eos.security.impl.service.internal.EOSSystemConstants;
-import com.eos.security.impl.service.internal.TransactionManagerImpl;
 import com.eos.security.impl.session.EOSSession;
 import com.eos.security.impl.session.SessionContextManager;
 
@@ -39,9 +38,8 @@ public class EOSTestUtil {
 	
 	private static final String CLEAR_DATA = "MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n,r";
 	
-	public static void clearDataBase(){
-		TransactionManager manager = TransactionManagerImpl.get().begin();
-		TransactionManagerImpl.transactionManager().executionEngine().execute(CLEAR_DATA);
+	public static void clearDataBase(TransactionManager manager){
+		manager.begin().executionEngine().execute(CLEAR_DATA);
 		manager.commit();
 	}
 
