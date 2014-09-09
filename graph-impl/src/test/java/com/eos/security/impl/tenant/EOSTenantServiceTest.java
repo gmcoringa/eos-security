@@ -3,6 +3,8 @@
  */
 package com.eos.security.impl.tenant;
 
+import static com.eos.security.impl.test.util.EOSTestUtil.buildTenant;
+import static com.eos.security.impl.test.util.EOSTestUtil.buildUser;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.anyInt;
@@ -61,10 +63,9 @@ public class EOSTenantServiceTest {
 	private EOSPermissionService svcPermission;
 	@Mock
 	TransactionManager transactionManager;
-	
+
 	@InjectMocks
 	private EOSTenantService svcTenant = new EOSTenantServiceImpl();
-	
 
 	// Tenant
 
@@ -102,19 +103,19 @@ public class EOSTenantServiceTest {
 		assertEquals("Create tenant", tenant, createdTenant);
 		verify(tenantDataDAO, Mockito.atLeast(2)).createTenantData(anyString(), anyString(), anyString());
 	}
-	
+
 	@Test
 	public void shouldFindTenantWhenItExists() {
 		String tenantAlias = "test-find";
 		EOSTenant tenant = buildTenant(tenantAlias);
 		when(tenantDAO.find(tenantAlias)).thenReturn(tenant);
 		EOSTenant found = svcTenant.findTenant(tenantAlias);
-		
+
 		assertEquals("Find tenant id equals", tenant, found);
 	}
-	
+
 	@Test(expected = EOSNotFoundException.class)
-	public void shouldThrowEOSNotFoundExceptionWhenTenantDosNotExists(){
+	public void shouldThrowEOSNotFoundExceptionWhenTenantDosNotExists() {
 		svcTenant.findTenant("test-find");
 	}
 
@@ -124,7 +125,7 @@ public class EOSTenantServiceTest {
 		Set<EOSTenant> tenants = Sets.newSet(buildTenant("findTenant1"), buildTenant("findTenant2"));
 		when(tenantDAO.findTenants(aliases)).thenReturn(tenants);
 		Set<EOSTenant> tenantsFound = svcTenant.findTenants(aliases);
-		
+
 		assertEquals("Find tenants size", tenants.size(), tenantsFound.size());
 		Assert.assertTrue("Find Tenants contains all", tenants.containsAll(tenantsFound));
 	}
@@ -168,104 +169,72 @@ public class EOSTenantServiceTest {
 
 	// Tenant Data
 
-	/*
 	@Test
-	public void testUpdateTenantData() {
-		EOSTenant tenant = new EOSTenant();
-		EOSUser admin = getUser("test@updatedata.mail");
-		Map<String, String> tenantData = new HashMap<>(2);
-		tenantData.put("key1", "value1");
-		tenantData.put("key2", "value2");
+	public void shouldRemoveUpdateAndCreateTenantData() {
+		String tenantAlias = "tenantUpdateData";
+		Set<String> keys = Sets.newSet("key1", "key2", "key3", "key4", "key5");
+		Set<String> removeKeys = Sets.newSet("key3", "key4");
+		Map<String, String> currentTenantData = new HashMap<>(4);
+		currentTenantData.put("key1", "value1");
+		currentTenantData.put("key2", "value2");
+		currentTenantData.put("key3", "value3");
+		currentTenantData.put("key4", "value4");
+		when(tenantDataDAO.findTenantDataValues(tenantAlias, keys)).thenReturn(currentTenantData);
 
-		tenant.setAlias("tenantUpdateData").setName("Update tenant data")
-				.setDescription("Update tenant data description");
-		tenant = svcTenant.createTenant(tenant, tenantData, admin);
+		// Test it
+		Map<String, String> updateTenantData = new HashMap<>(5);
+		updateTenantData.put("key1", "value1");
+		updateTenantData.put("key2", "newValue2");
+		updateTenantData.put("key3", null);
+		updateTenantData.put("key4", "");
+		updateTenantData.put("key5", "value5");
+		svcTenant.updateTenantData(tenantAlias, updateTenantData);
 
-		try {
-			EOSTestUtil.setup(context, tenant.getAlias(), admin);
-			tenantData = svcTenant.listTenantData(tenant.getAlias(), 5, 0);
-			Assert.assertEquals("tenant data size", 2, tenantData.size());
-			// Clear and rebuild tenant data
-			tenantData.clear();
-			tenantData.put("key1", "newValue"); // updated
-			tenantData.put("key2", ""); // Set to be removed
-			tenantData.put("key3", "value3"); // New value
-			tenantData.put("key4", "value4"); // New value
-
-			// Validations
-			svcTenant.updateTenantData(tenant.getAlias(), tenantData);
-			tenantData = svcTenant.listTenantData(tenant.getAlias(), 5, 0);
-			Assert.assertEquals("tenant data update size", 3, tenantData.size());
-			// tenant data with key1 check new value
-			String value = svcTenant.findTenantData(tenant.getAlias(), "key1");
-			Assert.assertEquals("tenant data update key1", "newValue", value);
-		} finally {
-			// Restore context.
-			EOSTestUtil.setup(context);
-		}
+		verify(tenantDataDAO, atLeastOnce()).updateTenantData(tenantAlias, "key2", "newValue2");
+		verify(tenantDataDAO, atLeastOnce()).createTenantData(tenantAlias, "key5", "value5");
+		verify(tenantDataDAO, atLeastOnce()).deleteTenantData(tenantAlias, removeKeys);
 	}
 
 	@Test
-	public void testListTenantDataByKeys() {
-		EOSTenant tenant = new EOSTenant();
-		EOSUser admin = getUser("test@listdatakey.mail");
-		Map<String, String> tenantData = new HashMap<>(3);
-		tenantData.put("key1", "value1");
-		tenantData.put("key2", "value2");
-		tenantData.put("key3", "value3");
+	public void shouldFindTenantData() {
+		String tenantAlias = "findTenantData", key = "findKey", value = "value";
+		when(tenantDataDAO.findTenantDataValue(tenantAlias, key)).thenReturn(value);
 
-		tenant.setAlias("tenantListByKeys").setName("List tenant data keys")
-				.setDescription("List tenant data keys description");
-		tenant = svcTenant.createTenant(tenant, tenantData, admin);
-		try {
-			EOSTestUtil.setup(context, tenant.getAlias(), admin);
-			Set<String> keys = new HashSet<>(2);
-			keys.add("key1");
-			keys.add("key2");
-			tenantData = svcTenant.listTenantData(tenant.getAlias(), keys);
-
-			Assert.assertTrue("List tenat keys", tenantData.containsKey("key1"));
-			Assert.assertTrue("List tenat keys", tenantData.containsKey("key2"));
-		} finally {
-			// Restore context.
-			EOSTestUtil.setup(context);
-		}
+		// Test it
+		String tenantData = svcTenant.findTenantData(tenantAlias, key);
+		assertEquals("Find tenant data", value, tenantData);
 	}
 
 	@Test
-	public void testListTenantData() {
-		EOSTenant tenant = new EOSTenant();
-		EOSUser admin = getUser("test@listdata.mail");
-		Map<String, String> tenantData = new HashMap<>(2);
-		tenantData.put("key1", "value1");
-		tenantData.put("key2", "value2");
-		tenantData.put("key3", "value3");
-		tenantData.put("key4", "value4");
+	public void shouldFindTenantDataByKeys() {
+		String tenantAlias = "findTenantDataByKeys";
+		Set<String> keys = Sets.newSet("key1", "key2", "key3");
+		Map<String, String> expectedTenantData = new HashMap<>(4);
+		expectedTenantData.put("key1", "value1");
+		expectedTenantData.put("key2", "value2");
+		expectedTenantData.put("key3", "value3");
+		expectedTenantData.put("key4", "value4");
+		when(tenantDataDAO.findTenantDataValues(tenantAlias, keys)).thenReturn(expectedTenantData);
 
-		tenant.setAlias("listTenantData").setName("List tenant data keys")
-				.setDescription("List tenant data keys description");
-		tenant = svcTenant.createTenant(tenant, tenantData, admin);
+		// Test it
+		Map<String, String> tenantData = svcTenant.listTenantData(tenantAlias, keys);
+		assertEquals("List tenant data by keys", expectedTenantData, tenantData);
+	}
 
-		try {
-			EOSTestUtil.setup(context, tenant.getAlias(), admin);
-			tenantData = svcTenant.listTenantData(tenant.getAlias(), 5, 0);
-			Assert.assertEquals("tenant data size", 4, tenantData.size());
-		} finally {
-			// Restore context.
-			EOSTestUtil.setup(context);
-		}
+	@Test
+	public void shouldListTenantData() {
+		String tenantAlias = "listTenantData";
+		Map<String, String> expectedTenantData = new HashMap<>(3);
+		expectedTenantData.put("key1", "value1");
+		expectedTenantData.put("key2", "value2");
+		expectedTenantData.put("key3", "value3");
+		when(tenantDataDAO.listTenantData(tenantAlias, 5, 0)).thenReturn(expectedTenantData);
+
+		// Test it
+		Map<String, String> tenantData = svcTenant.listTenantData(tenantAlias, 5, 0);
+		assertEquals("List tenant data by keys", expectedTenantData, tenantData);
 	}
-*/
-	// Util
-	
-	private EOSUser buildUser(String tenantMail) {
-		return new EOSUser().setLogin("test.user").setFirstName("Test").setLastName("User")
-				.setPersonalMail("test@personal.com").setEmail(tenantMail).setState(EOSState.ACTIVE);
-	}
-	
-	private EOSTenant buildTenant(String alias) {
-		return new EOSTenant().setAlias(alias).setName("Tenant name for" + alias)
-				.setDescription("Tenant description for " + alias);
-	}
-	
+
+	// Utilities
+
 }

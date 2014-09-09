@@ -7,10 +7,14 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.neo4j.graphdb.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.eos.common.EOSState;
 
 /**
  * Utility to convert nodes to POJO objects.
@@ -21,6 +25,16 @@ import org.slf4j.LoggerFactory;
 public class ReflectionUtil {
 
 	private static final Logger log = LoggerFactory.getLogger(ReflectionUtil.class);
+
+	public static Set<String> statesAsString(Set<EOSState> states) {
+		Set<String> stateNames = new HashSet<>(states.size());
+
+		for (EOSState state : states) {
+			stateNames.add(state.name());
+		}
+
+		return stateNames;
+	}
 
 	public static <T> T convert(Node node, Class<T> clazz) {
 		try {

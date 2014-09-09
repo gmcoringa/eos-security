@@ -51,6 +51,7 @@ public class EOSRoleServiceTest {
 	@Autowired
 	private EOSRoleService svcRole;
 
+	/*
 	@Before
 	public void setUp() throws EOSException {
 		EOSTestUtil.setup(context);
@@ -259,5 +260,5 @@ public class EOSRoleServiceTest {
 		Assert.assertEquals("Remove Group Roles: size removed", 1, roles.size());
 		Assert.assertEquals("Remove Group Roles: contains", role1.getCode(), roles.get(0).getCode());
 	}
-
+*/
 }

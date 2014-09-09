@@ -47,7 +47,7 @@ public class EOSGroupServiceTest {
 	private EOSSecurityService svcSecurity;
 	@Autowired
 	private EOSUserService svcUser;
-
+/*
 	@Before
 	public void setUp() throws EOSException {
 		EOSTestUtil.setup(context);
@@ -112,15 +112,6 @@ public class EOSGroupServiceTest {
 		Assert.assertNull(deleted);
 	}
 
-	/**
-	 * Tests add multiples users to one group. Also tests listing users by
-	 * group.
-	 * 
-	 * @throws EOSDuplicatedEntryException
-	 * @throws EOSForbiddenException
-	 * @throws EOSUnauthorizedException
-	 * @throws EOSValidationException
-	 */
 	@Test
 	public void testAddFindUsersGroup() throws EOSDuplicatedEntryException, EOSForbiddenException,
 			EOSUnauthorizedException, EOSValidationException {
@@ -137,15 +128,6 @@ public class EOSGroupServiceTest {
 		Assert.assertTrue("Group Users Add contains", userLogins.contains(users.get(1).getLogin()));
 	}
 
-	/**
-	 * Tests add one user in multiples groups. Also tests listing groups by
-	 * user.
-	 * 
-	 * @throws EOSDuplicatedEntryException
-	 * @throws EOSForbiddenException
-	 * @throws EOSUnauthorizedException
-	 * @throws EOSValidationException
-	 */
 	@Test
 	public void testAddFindGroupsUser() throws EOSDuplicatedEntryException, EOSForbiddenException,
 			EOSUnauthorizedException, EOSValidationException {
@@ -162,15 +144,6 @@ public class EOSGroupServiceTest {
 		Assert.assertTrue("User Groups contains", groupIds.contains(groups.get(1).getId()));
 	}
 
-	/**
-	 * Tests remove multiples users from one group. Also tests listing users by
-	 * group.
-	 * 
-	 * @throws EOSDuplicatedEntryException
-	 * @throws EOSForbiddenException
-	 * @throws EOSUnauthorizedException
-	 * @throws EOSValidationException
-	 */
 	@Test
 	public void testRemoveUsersFromGroup() throws EOSDuplicatedEntryException, EOSForbiddenException,
 			EOSUnauthorizedException, EOSValidationException {
@@ -192,15 +165,6 @@ public class EOSGroupServiceTest {
 		Assert.assertEquals("Group Users Remove validate", users.get(0).getLogin(), user1.getLogin());
 	}
 
-	/**
-	 * Tests remove one user from multiples groups. Also tests listing groups by
-	 * user.
-	 * 
-	 * @throws EOSDuplicatedEntryException
-	 * @throws EOSForbiddenException
-	 * @throws EOSUnauthorizedException
-	 * @throws EOSValidationException
-	 */
 	@Test
 	public void testRemoveUserFromGroups() throws EOSDuplicatedEntryException, EOSForbiddenException,
 			EOSUnauthorizedException, EOSValidationException {
@@ -242,5 +206,5 @@ public class EOSGroupServiceTest {
 		Assert.assertTrue("User Groups Remove By User: empty list", groups.isEmpty());
 
 	}
-
+*/
 }

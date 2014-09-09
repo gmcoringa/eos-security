@@ -17,6 +17,18 @@
 	
 	 <bean id="dataBaseServer" class="com.eos.security.impl.test.util.TestDataBaseServer">
     </bean>
+    
+    <bean id="transactionScope" class="com.eos.security.impl.service.internal.EOSTransactionThreadLocalScope"/>
+ 
+    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+        <property name="scopes">
+            <map>
+                <entry key="threadLocal">
+                    <ref bean="transactionScope" />
+                </entry>
+            </map>
+        </property>
+    </bean>
 	
 
 </beans>

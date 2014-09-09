@@ -45,7 +45,7 @@ public class EOSTenantDAO {
 
 	@Autowired
 	TransactionManager transactionManager;
-	
+
 	public EOSTenant create(EOSTenant tenant) {
 
 		try (ResourceIterator<Node> result = transactionManager.executionEngine()
@@ -63,8 +63,8 @@ public class EOSTenantDAO {
 		Map<String, Object> params = new HashMap<>(1);
 		params.put("alias", alias);
 
-		try (ResourceIterator<Node> result = transactionManager.executionEngine()
-				.execute(QUERY_FIND, params).columnAs("tenant")) {
+		try (ResourceIterator<Node> result = transactionManager.executionEngine().execute(QUERY_FIND, params)
+				.columnAs("tenant")) {
 			if (result.hasNext()) {
 				return ReflectionUtil.convert(result.next(), EOSTenant.class);
 			} else {
@@ -79,8 +79,8 @@ public class EOSTenantDAO {
 		params.put("name", tenant.getName());
 		params.put("description", tenant.getDescription());
 
-		try (ResourceIterator<Node> result = transactionManager.executionEngine()
-				.execute(QUERY_UPDATE, params).columnAs("tenant")) {
+		try (ResourceIterator<Node> result = transactionManager.executionEngine().execute(QUERY_UPDATE, params)
+				.columnAs("tenant")) {
 			if (result.hasNext()) {
 				return ReflectionUtil.convert(result.next(), EOSTenant.class);
 			} else {
@@ -94,8 +94,8 @@ public class EOSTenantDAO {
 		params.put("alias", alias);
 		params.put("state", state.name());
 
-		try (ResourceIterator<Node> result = transactionManager.executionEngine()
-				.execute(QUERY_UPDATE_STATE, params).columnAs("tenant")) {
+		try (ResourceIterator<Node> result = transactionManager.executionEngine().execute(QUERY_UPDATE_STATE, params)
+				.columnAs("tenant")) {
 			if (result.hasNext()) {
 				return ReflectionUtil.convert(result.next(), EOSTenant.class);
 			} else {
@@ -113,14 +113,14 @@ public class EOSTenantDAO {
 			query = QUERY_LIST;
 		} else {
 			query = QUERY_LIST_BY_STATE;
-			params.put("states", states);
+			params.put("states", ReflectionUtil.statesAsString(states));
 		}
 
 		params.put("limit", limit);
 		params.put("skip", offset);
 
-		try (ResourceIterator<Node> result = transactionManager.executionEngine()
-				.execute(query, params).columnAs("tenant")) {
+		try (ResourceIterator<Node> result = transactionManager.executionEngine().execute(query, params)
+				.columnAs("tenant")) {
 			while (result.hasNext()) {
 				tenants.add(ReflectionUtil.convert(result.next(), EOSTenant.class));
 			}

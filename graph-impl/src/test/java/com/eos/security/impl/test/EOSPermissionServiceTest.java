@@ -53,6 +53,7 @@ public class EOSPermissionServiceTest {
 	@Autowired
 	private EOSPermissionService svcPermission;
 
+	/*
 	@Before
 	public void setUp() throws EOSException {
 		EOSTestUtil.setup(context);
@@ -113,4 +114,5 @@ public class EOSPermissionServiceTest {
 		Assert.assertFalse("Hasn't group permission",
 				svcPermission.hasPermission(user.getLogin(), "hasGroupRolePermission3"));
 	}
+	*/
 }

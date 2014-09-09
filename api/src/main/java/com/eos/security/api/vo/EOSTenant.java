@@ -109,6 +109,9 @@ public class EOSTenant implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((alias == null) ? 0 : alias.hashCode());
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((state == null) ? 0 : state.hashCode());
 		return result;
 	}
 
@@ -128,6 +131,18 @@ public class EOSTenant implements Serializable {
 			if (other.alias != null)
 				return false;
 		} else if (!alias.equals(other.alias))
+			return false;
+		if (description == null) {
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (state != other.state)
 			return false;
 		return true;
 	}

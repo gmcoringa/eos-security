@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.WebApplicationContext;
 
 import com.eos.security.impl.service.DataBaseServer;
 import com.eos.security.impl.service.TransactionManager;
@@ -23,8 +22,8 @@ import com.eos.security.impl.service.TransactionManager;
  * 
  */
 @Component
-@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.INTERFACES)
-public class TransactionManagerImpl implements com.eos.security.impl.service.TransactionManager {
+@Scope(value = EOSTransactionThreadLocalScope.SCOPE_NAME, proxyMode = ScopedProxyMode.INTERFACES)
+public class TransactionManagerImpl implements TransactionManager {
 
 	private final GraphDatabaseService graphDB;
 	private final ExecutionEngine engine;
@@ -109,6 +108,12 @@ public class TransactionManagerImpl implements com.eos.security.impl.service.Tra
 	@Override
 	public boolean isOpen() {
 		return transactionCounter.get() > 0;
+	}
+	
+	@Override
+	public void close() throws Exception {
+		commit();
+		
 	}
 
 }

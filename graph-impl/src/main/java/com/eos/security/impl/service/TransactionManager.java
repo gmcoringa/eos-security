@@ -10,7 +10,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
  * @author fabiano.santos
  * 
  */
-public interface TransactionManager {
+public interface TransactionManager extends AutoCloseable {
 
 	/**
 	 * Begin a transaction. If there is a transaction open, nothing is done.
