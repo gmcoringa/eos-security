@@ -20,13 +20,13 @@ import com.eos.security.api.vo.EOSUser;
 import com.eos.security.impl.service.DataBaseServer;
 import com.eos.security.impl.service.TransactionManager;
 import com.eos.security.impl.service.internal.EOSSystemConstants;
-import com.eos.security.impl.service.internal.TransactionManagerImpl;
 import com.eos.security.impl.service.permission.EOSPermissionDAO;
 import com.eos.security.impl.service.role.EOSRoleDAO;
 import com.eos.security.impl.service.role.EOSRoleUserDAO;
 import com.eos.security.impl.service.tenant.EOSTenantDAO;
 import com.eos.security.impl.service.user.EOSUserDAO;
 import com.eos.security.impl.service.user.EOSUserTenantDAO;
+import com.eos.security.impl.transaction.TransactionManagerImpl;
 
 /**
  * Startup service. Create application default tenant, user, role and permissions.

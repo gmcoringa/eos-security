@@ -34,6 +34,8 @@ public class RequestPipeline implements Filter {
 			.getLogger(RequestPipeline.class);
 
 	public static final String SESSION_HEADER = "ppk";
+	public static final String REST_PATH = "/api";
+
 
 	@Autowired
 	private EOSSecurityService svcSecurity;
@@ -59,7 +61,7 @@ public class RequestPipeline implements Filter {
 		final HttpServletResponse httpRes = (HttpServletResponse) response;
 		String uri = httpReq.getRequestURI();
 
-		if (uri.startsWith(RestSecurityConfiguration.REST_PATH)) {
+		if (uri.startsWith(REST_PATH)) {
 			// Setup context for all rest requests
 			try {
 				setupContext(httpReq, httpRes);

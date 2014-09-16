@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.eos.security.impl.service.internal;
+package com.eos.security.impl.transaction;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import com.eos.security.impl.service.DataBaseServer;
 import com.eos.security.impl.service.TransactionManager;
+import com.eos.security.impl.service.internal.EOSTransactionThreadLocalScope;
 
 /**
  * @author fabiano.santos

@@ -32,8 +32,8 @@ import com.eos.security.api.vo.EOSUser;
 import com.eos.security.impl.service.TransactionManager;
 import com.eos.security.impl.service.internal.EOSSystemConstants;
 import com.eos.security.impl.service.internal.EOSValidator;
-import com.eos.security.impl.service.internal.RoleCreator;
-import com.eos.security.impl.service.internal.RoleCreatorFactory;
+import com.eos.security.impl.service.role.RoleCreator;
+import com.eos.security.impl.service.role.RoleCreatorFactory;
 import com.eos.security.impl.session.SessionContextManager;
 
 /**

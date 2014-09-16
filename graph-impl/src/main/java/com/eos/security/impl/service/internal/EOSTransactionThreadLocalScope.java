@@ -6,6 +6,7 @@ import org.springframework.beans.factory.config.Scope;
 
 import com.eos.security.impl.service.DataBaseServer;
 import com.eos.security.impl.service.TransactionManager;
+import com.eos.security.impl.transaction.TransactionManagerImpl;
 
 public class EOSTransactionThreadLocalScope implements Scope {
 	

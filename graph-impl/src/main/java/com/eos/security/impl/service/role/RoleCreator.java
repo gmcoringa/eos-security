@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.eos.security.impl.service.internal;
+package com.eos.security.impl.service.role;
 
 import java.io.Serializable;
 import java.util.HashSet;
