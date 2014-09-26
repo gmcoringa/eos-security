@@ -1,1 +1,1 @@
-include 'common-util', 'api', 'graph-impl', 'web'
+include 'common-util', 'api', 'graph-impl', 'web', 'rest-client'
