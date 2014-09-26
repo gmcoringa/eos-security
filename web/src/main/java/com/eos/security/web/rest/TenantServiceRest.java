@@ -46,13 +46,9 @@ public class TenantServiceRest {
 	@Path("/")
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public EOSTenant createTenant(EOSTenantCreateData data) throws EOSException {
-
-		// Create tenant
-		EOSTenant tenant = svcTenant.createTenant(data.getTenant(), data.getData(), data.getAdminUser());
+	public void createTenant(EOSTenantCreateData data) throws EOSException {
+		svcTenant.createTenant(data.getTenant(), data.getData(), data.getAdminUser());
 		response.setStatus(Response.Status.CREATED.getStatusCode());
-		return tenant;
 	}
 
 	@Path("/{tenantAlias}")
