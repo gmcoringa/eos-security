@@ -27,7 +27,7 @@ public class RemoteDataBaseServer implements DataBaseServer {
 	@PostConstruct
 	public void init() {
 		log.info("### Initializing Graph database server ###");
-		graphService = new GraphDatabaseFactory().newEmbeddedDatabase("build/graph");
+		/// TODO graphService = ??
 		log.info("### Graph database server UP ###");
 	}
 

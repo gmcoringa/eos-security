@@ -106,7 +106,6 @@ public class UserServiceRest {
 		svcUser.purgeUser(login);
 	}
 
-	@Path("")
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -124,7 +123,6 @@ public class UserServiceRest {
 		return svcUser.findUsers(logins);
 	}
 
-	@Path("")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<EOSUser> listUsers(@QueryParam("state") List<EOSState> states,
@@ -206,10 +204,10 @@ public class UserServiceRest {
 		svcUser.updateUserData(login, userData);
 	}
 
-	@Path("/{login}/data")
+	@Path("/{login}/data/keys")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Map<String, String> listUserData(@PathParam("login") String login, List<String> keys) {
+	public Map<String, String> listUserData(@PathParam("login") String login, @QueryParam("key") List<String> keys) {
 		return svcUser.listUserData(login, keys);
 	}
 

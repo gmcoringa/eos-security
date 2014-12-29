@@ -78,8 +78,8 @@ public class EOSUserTenantDAO {
 	private Map<String, Object> userAsMap(EOSUser user) {
 		Map<String, Object> params = new HashMap<>(5);
 		params.put("login", user.getLogin());
-		params.put("nickName", user.getFirstName());
-		params.put("email", user.getLastName());
+		params.put("nickName", user.getNickName());
+		params.put("email", user.getEmail());
 		params.put("state", user.getState().name());
 		params.put("userTenantId", userTenantId(user.getLogin(), user.getTenantAlias()));
 

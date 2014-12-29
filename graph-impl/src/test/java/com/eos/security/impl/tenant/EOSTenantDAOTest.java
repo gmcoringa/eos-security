@@ -25,14 +25,12 @@ import com.eos.common.EOSState;
 import com.eos.security.api.vo.EOSTenant;
 import com.eos.security.impl.service.DataBaseServer;
 import com.eos.security.impl.service.TransactionManager;
-import com.eos.security.impl.service.internal.EOSTransactionThreadLocalScope;
 import com.eos.security.impl.service.tenant.EOSTenantDAO;
 import com.eos.security.impl.test.util.TestDataBaseServer;
 import com.eos.security.impl.transaction.TransactionManagerImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { EOSTenantDAO.class, TransactionManagerImpl.class, TestDataBaseServer.class,
-		EOSTransactionThreadLocalScope.class })
+@ContextConfiguration(classes = { EOSTenantDAO.class, TransactionManagerImpl.class, TestDataBaseServer.class })
 public class EOSTenantDAOTest {
 
 	@Autowired

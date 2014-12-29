@@ -10,25 +10,18 @@
     http://www.springframework.org/schema/aop/spring-aop.xsd">
 
 	<!-- Configuration -->
-	<context:property-placeholder location="file:${EOS_SECURITY_CONFIG_FILE}" />
+	<context:property-placeholder
+		location="
+    					classpath:eos-security.properties,
+    					file:${EOS_SECURITY_CONFIG_FILE}"
+		ignore-resource-not-found="true" />
 
 	<!-- Dependency Injection -->
 	<context:annotation-config />
 	<context:component-scan base-package="com.eos.security.impl, com.eos.security.web" />
 
-	<bean id="dataBaseServer" class="com.eos.security.impl.service.internal.RemoteDataBaseServer" />
-
-	<bean id="transactionScope"
-		class="com.eos.security.impl.service.internal.EOSTransactionThreadLocalScope" />
-
-	<bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
-		<property name="scopes">
-			<map>
-				<entry key="threadLocal">
-					<ref bean="transactionScope" />
-				</entry>
-			</map>
-		</property>
-	</bean>
+	<!-- <bean id="dataBaseServer" class="com.eos.security.impl.service.internal.RemoteDataBaseServer" 
+		/> -->
+	<bean id="dataBaseServer" class="${database.class:com.eos.security.impl.service.internal.EmbeddedDataBaseServer}" />
 
 </beans>

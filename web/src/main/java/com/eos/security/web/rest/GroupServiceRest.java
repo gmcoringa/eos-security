@@ -109,7 +109,6 @@ public class GroupServiceRest {
 		return svcGroup.listGroups(minimumLevel, maximumLevel, limit, offset);
 	}
 
-	@Path("")
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)

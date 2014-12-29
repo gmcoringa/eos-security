@@ -59,7 +59,6 @@ public class RoleServiceRest {
 		svcPermission = eosPermissionService;
 	}
 
-	@Path("")
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)

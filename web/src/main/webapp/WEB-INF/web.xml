@@ -27,8 +27,12 @@
 	<servlet>
 	    <servlet-name>Jersey Web Application</servlet-name>
 	    <servlet-class>
-	        com.sun.jersey.spi.spring.container.servlet.SpringServlet
+	        org.glassfish.jersey.servlet.ServletContainer
 	    </servlet-class>
+	    <init-param>
+            <param-name>javax.ws.rs.Application</param-name>
+            <param-value>com.eos.security.web.RestConfiguration</param-value>
+        </init-param>
 	</servlet>
 	
 	<servlet-mapping>
