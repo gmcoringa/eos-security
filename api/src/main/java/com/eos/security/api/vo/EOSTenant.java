@@ -93,15 +93,6 @@ public class EOSTenant implements Serializable {
 	}
 
 	/**
-	 * @param state
-	 *            the state to set
-	 */
-	public EOSTenant setState(String state) {
-		this.state = EOSState.valueOf(state);
-		return this;
-	}
-
-	/**
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override

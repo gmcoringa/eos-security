@@ -166,15 +166,6 @@ public class EOSUser implements Serializable {
 	}
 
 	/**
-	 * @param state
-	 *            the state to set
-	 */
-	public EOSUser setState(String state) {
-		this.state = EOSState.valueOf(state);
-		return this;
-	}
-
-	/**
 	 * @return the type
 	 */
 	public EOSUserType getType() {
@@ -187,15 +178,6 @@ public class EOSUser implements Serializable {
 	 */
 	public EOSUser setType(EOSUserType type) {
 		this.type = type;
-		return this;
-	}
-
-	/**
-	 * @param type
-	 *            the type to set
-	 */
-	public EOSUser setType(String type) {
-		this.type = EOSUserType.valueOf(type);
 		return this;
 	}
 

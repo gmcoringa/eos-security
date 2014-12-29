@@ -4,7 +4,7 @@
 package com.eos.security.web.util;
 
 import com.eos.common.exception.EOSException;
-import com.eos.security.web.dto.EOSExceptionData;
+import com.eos.common.exception.EOSExceptionData;
 
 /**
  * Utilities for web module.
