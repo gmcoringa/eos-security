@@ -10,7 +10,7 @@
 	<context:property-placeholder
 		location="
     					classpath:eos-security.properties,
-    					file:${EOS_SECURITY_CONFIG_FILE}"
+    					file:${EOS_SECURITY_CONFIG_FILE:}"
 		ignore-resource-not-found="true" />
 
 	<!-- Dependency Injection -->
