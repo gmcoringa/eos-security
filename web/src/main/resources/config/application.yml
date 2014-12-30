@@ -1,0 +1,21 @@
+spring:
+  profiles.active: default
+---
+spring:
+  profiles: default
+database:
+  mode: EmbeddedDataBaseServer
+  rootDirectory: graph-data
+  clean: false
+---
+spring:
+  profiles: integration
+database:
+  mode: EmbeddedDataBaseServer
+  rootDirectory: /tmp/graph
+  clean: true
+---
+spring:
+  profiles: test
+database:
+  mode: TestDataBaseServer

@@ -2,6 +2,10 @@ package com.eos.security.web.rest;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.IntegrationTest;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.eos.common.EOSUserType;
 import com.eos.security.api.vo.EOSTenant;
@@ -9,10 +13,14 @@ import com.eos.security.api.vo.EOSUser;
 import com.eos.security.client.rest.ClientConnection;
 import com.eos.security.client.rest.tenant.EOSTenantCreateData;
 import com.eos.security.client.rest.tenant.TenantClient;
+import com.eos.security.web.EOSApplication;
 
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@SpringApplicationConfiguration(classes = EOSApplication.class)
+//@IntegrationTest({"server.port=8899", "management.port=9988"})
 public class TenantServiceRestTest {
 
-	private static final String SERVER = "http://localhost:8899/eos-security/api";
+	private static final String SERVER = "http://localhost:8899/api";
 
 	private ClientConnection connection;
 

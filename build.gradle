@@ -86,7 +86,7 @@ project(':web'){
 
 		providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
 
-		testCompile project(':rest-client'), 'junit:junit:4.11', 'org.slf4j:slf4j-api:1.7.7', JERSEY, JSON, SPRING, 'org.neo4j:neo4j:2.1.3'
+		testCompile project(':rest-client'), 'junit:junit:4.11', 'org.springframework.boot:spring-boot-starter-test:1.2.0.RELEASE'
 
 		runtime LOGBACK, project(':graph-impl')
 

@@ -10,6 +10,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.kernel.impl.util.StringLogger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
@@ -34,7 +35,7 @@ public class TransactionManagerImpl implements TransactionManager {
 	private final DataBaseServer dataBaseServer;
 
 	@Autowired
-	public TransactionManagerImpl(DataBaseServer server){
+	public TransactionManagerImpl(@Qualifier("${database.mode}") DataBaseServer server) {
 		dataBaseServer = server;
 		graphDB = dataBaseServer.get();
 		engine = new ExecutionEngine(graphDB, StringLogger.SYSTEM);
@@ -110,11 +111,11 @@ public class TransactionManagerImpl implements TransactionManager {
 	public boolean isOpen() {
 		return transactionCounter.get() > 0;
 	}
-	
+
 	@Override
 	public void close() throws Exception {
 		commit();
-		
+
 	}
 
 }
