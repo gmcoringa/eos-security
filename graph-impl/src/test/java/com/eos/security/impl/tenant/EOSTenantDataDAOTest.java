@@ -14,7 +14,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.internal.util.collections.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -35,7 +34,7 @@ public class EOSTenantDataDAOTest {
 	private EOSTenantDAO tenantDAO;
 	@Autowired
 	private EOSTenantDataDAO tenantDataDAO;
-	@Autowired @Qualifier("TestDataBaseServer")
+	@Autowired
 	private DataBaseServer dataBaseServer;
 	@Autowired
 	ApplicationContext context;
@@ -99,19 +98,18 @@ public class EOSTenantDataDAOTest {
 
 	@Test
 	public void shouldFindTenantDataByKeys() {
-		String tenantAlias =  "data-find-keys";
+		String tenantAlias = "data-find-keys";
 		Map<String, String> expected = new HashMap<>(2);
 		expected.put("key1", "value1");
 		expected.put("key2", "value2");
-		
-		
+
 		manager.begin();
 		EOSTenantDAOUtil.create(tenantAlias, tenantDAO);
-		
-		for(Entry<String, String> entry : expected.entrySet()){
+
+		for (Entry<String, String> entry : expected.entrySet()) {
 			tenantDataDAO.createTenantData(tenantAlias, entry.getKey(), entry.getValue());
 		}
-		
+
 		Map<String, String> found = tenantDataDAO.findTenantDataValues(tenantAlias, expected.keySet());
 		manager.commit();
 
@@ -120,19 +118,18 @@ public class EOSTenantDataDAOTest {
 
 	@Test
 	public void shouldListAllTenantData() {
-		String tenantAlias =  "data-list";
+		String tenantAlias = "data-list";
 		Map<String, String> expected = new HashMap<>(2);
 		expected.put("key1", "value1");
 		expected.put("key2", "value2");
-		
-		
+
 		manager.begin();
 		EOSTenantDAOUtil.create(tenantAlias, tenantDAO);
-		
-		for(Entry<String, String> entry : expected.entrySet()){
+
+		for (Entry<String, String> entry : expected.entrySet()) {
 			tenantDataDAO.createTenantData(tenantAlias, entry.getKey(), entry.getValue());
 		}
-		
+
 		Map<String, String> found = tenantDataDAO.listTenantData(tenantAlias, 5, 0);
 		manager.commit();
 

@@ -4,7 +4,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.eos.common.EOSState;
@@ -27,7 +26,7 @@ public class EOSSecurityInitializer {
 
 	private static final Logger log = LoggerFactory.getLogger(EOSSecurityInitializer.class);
 
-	@Autowired @Qualifier("${database.mode}")
+	@Autowired
 	DataBaseServer dataBaseServer;
 	@Autowired
 	private EOSTenantDAO tenantDAO;

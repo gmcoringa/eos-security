@@ -4,14 +4,14 @@ spring:
 spring:
   profiles: default
 database:
-  mode: EmbeddedDataBaseServer
-  rootDirectory: graph-data
+  class: com.eos.security.impl.service.internal.EmbeddedDataBaseServer
+  rootDirectory: ${database.rootDir:graph-data}
   clean: false
 ---
 spring:
   profiles: integration
 database:
-  mode: EmbeddedDataBaseServer
+  class: com.eos.security.impl.service.internal.EmbeddedDataBaseServer
   rootDirectory: /tmp/graph
   clean: true
 ---

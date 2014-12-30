@@ -34,8 +34,7 @@ subprojects {
 
 	List JSON = ['org.codehaus.jackson:jackson-core-asl:1.9.13', 'org.codehaus.jackson:jackson-mapper-asl:1.9.13']
 
-	List JERSEY = ['org.glassfish.jersey.containers:jersey-container-servlet:2.12', 'org.glassfish.jersey.ext:jersey-spring3:2.12', 
-		'org.glassfish.jersey.media:jersey-media-json-jackson:2.12']
+	List JERSEY = ['org.springframework.boot:spring-boot-starter-jersey:1.2.0.RELEASE']
 
 	List TEST = ['junit:junit:4.11', 'org.mockito:mockito-core:1.9.5', 'org.neo4j:neo4j-kernel:2.1.3:tests', 
 		'org.springframework:spring-test:4.1.3.RELEASE']
@@ -81,8 +80,8 @@ project(':web'){
 
 	dependencies {
 
-		compile project(':common-util'), project(':api'), JERSEY, JSON, SPRING, SPRING_BOOT,
-			'javax.ws.rs:javax.ws.rs-api:2.0', 'org.slf4j:slf4j-api:1.7.7', 'org.neo4j:neo4j:2.1.3', 'org.scannotation:scannotation:1.0.3'
+		compile project(':common-util'), project(':api'), JSON, SPRING, SPRING_BOOT, JERSEY,
+			'javax.ws.rs:javax.ws.rs-api:2.0', 'org.slf4j:slf4j-api:1.7.7', 'org.neo4j:neo4j:2.1.3', 'org.reflections:reflections:0.9.9'
 
 		providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
 
@@ -149,4 +148,4 @@ project(':rest-client'){
 }
 
 
-// TODO remove hibernate validation, validate undertow
+// TODO remove hibernate validation, migrate integration to spring boot

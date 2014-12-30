@@ -6,7 +6,6 @@ package com.eos.security.impl.listener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -26,7 +25,7 @@ public class EOSSecurityStartup implements ApplicationListener<ContextRefreshedE
 
 	private static final Logger log = LoggerFactory.getLogger(EOSSecurityStartup.class);
 
-	@Autowired @Qualifier("${database.mode}")
+	@Autowired
 	private DataBaseServer dataBaseServer;
 	@Autowired
 	private EOSSecurityInitializer initializer;

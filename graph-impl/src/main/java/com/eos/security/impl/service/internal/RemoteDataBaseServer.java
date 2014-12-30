@@ -7,10 +7,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import com.eos.security.impl.service.DataBaseServer;
 
@@ -20,7 +18,6 @@ import com.eos.security.impl.service.DataBaseServer;
  * @author fabiano.santos
  * 
  */
-@Component("RemoteDataBaseServer")
 public class RemoteDataBaseServer implements DataBaseServer {
 
 	private GraphDatabaseService graphService;
@@ -29,7 +26,7 @@ public class RemoteDataBaseServer implements DataBaseServer {
 	@PostConstruct
 	public void init() {
 		log.info("### Initializing Graph database server ###");
-		/// TODO graphService = ??
+		// / TODO graphService = ??
 		log.info("### Graph database server UP ###");
 	}
 
