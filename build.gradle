@@ -107,27 +107,6 @@ project(':web'){
 	    testClassesDir = sourceSets.integration.output.classesDir
 	    classpath = sourceSets.integration.runtimeClasspath
 
-		doFirst {
-	    	println 'Starting embedded Jetty'
-
-	    	jettyRunWar.httpPort = 8899
-	    	[jettyRunWar, jettyStop]*.stopPort = 8877
-	    	[jettyRunWar, jettyStop]*.stopKey = 'stopKey'
-	    	jettyRunWar.daemon = true
-	    	jettyRunWar.contextPath = 'eos-security'
-
-	    	jettyRunWar.execute()
-	    }
-
-	    doLast {
-	    	println 'Stoping embedded Jetty'
-
-	    	jettyStop.stopPort = 8877
-	    	jettyStop.stopKey = 'stopKey'
-
-	    	jettyStop.execute()
-	    }
-
 	    onlyIf { !project.hasProperty('skipIntegration') }
 	}
 
