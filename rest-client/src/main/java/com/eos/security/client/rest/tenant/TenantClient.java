@@ -40,7 +40,6 @@ public class TenantClient extends AbstractRestClient {
 					Entity.entity(tenant, MediaType.APPLICATION_JSON));
 
 			if (response.getStatus() != Status.CREATED.getStatusCode()) {
-//				throw new EOSException("Status: " + response.getStatus() + ", message: " + response.readEntity(String.class));
 				EOSExceptionData exceptionData = response.readEntity(EOSExceptionData.class);
 				LOG.debug("Failed to create tenant {}. Response: {}.", tenant, exceptionData);
 				throw new EOSException(exceptionData.getMessage(), exceptionData.getErrors());

@@ -1,0 +1,21 @@
+spring:
+  profiles.active: default
+---
+spring:
+  profiles: default
+database:
+  class: com.eos.security.impl.service.internal.EmbeddedDataBaseServer
+  rootDirectory: ${database.rootDir:graph-data}
+  clean: false
+---
+spring:
+  profiles: integration
+database:
+  class: com.eos.security.impl.service.internal.EmbeddedDataBaseServer
+  rootDirectory: /tmp/graph
+  clean: true
+---
+spring:
+  profiles: test
+database:
+  mode: TestDataBaseServer

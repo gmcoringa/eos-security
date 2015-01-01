@@ -34,7 +34,7 @@ public class TransactionManagerImpl implements TransactionManager {
 	private final DataBaseServer dataBaseServer;
 
 	@Autowired
-	public TransactionManagerImpl(DataBaseServer server){
+	public TransactionManagerImpl(DataBaseServer server) {
 		dataBaseServer = server;
 		graphDB = dataBaseServer.get();
 		engine = new ExecutionEngine(graphDB, StringLogger.SYSTEM);
@@ -110,11 +110,11 @@ public class TransactionManagerImpl implements TransactionManager {
 	public boolean isOpen() {
 		return transactionCounter.get() > 0;
 	}
-	
+
 	@Override
 	public void close() throws Exception {
 		commit();
-		
+
 	}
 
 }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.eos.security.impl.service.DataBaseServer;
 
-@Component
+@Component("TestDataBaseServer")
 public class TestDataBaseServer implements DataBaseServer {
 
 	private GraphDatabaseService graphDatabaseService;

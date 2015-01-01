@@ -32,9 +32,9 @@ import com.eos.security.impl.service.DataBaseServer;
 public class EmbeddedDataBaseServer implements DataBaseServer {
 
 	private GraphDatabaseService graphService;
-	@Value("${database.embedded.dir}")
+	@Value("${database.rootDirectory}")
 	private String databaseDir;
-	@Value("${database.embedded.clean}")
+	@Value("${database.clean}")
 	private String clean;
 	private static final Logger LOG = LoggerFactory.getLogger(EmbeddedDataBaseServer.class);
 

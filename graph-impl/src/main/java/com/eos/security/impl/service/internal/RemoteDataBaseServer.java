@@ -7,7 +7,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +26,7 @@ public class RemoteDataBaseServer implements DataBaseServer {
 	@PostConstruct
 	public void init() {
 		log.info("### Initializing Graph database server ###");
-		/// TODO graphService = ??
+		// / TODO graphService = ??
 		log.info("### Graph database server UP ###");
 	}
 
