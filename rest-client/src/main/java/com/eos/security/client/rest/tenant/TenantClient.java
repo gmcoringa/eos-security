@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.eos.common.exception.EOSException;
 import com.eos.common.exception.EOSExceptionData;
 import com.eos.security.api.vo.EOSTenant;
+import com.eos.security.api.web.resources.EOSTenantCreateData;
 import com.eos.security.client.rest.AbstractRestClient;
 import com.eos.security.client.rest.ClientConnection;
 
@@ -28,7 +29,7 @@ public class TenantClient extends AbstractRestClient {
 	private static final Logger LOG = LoggerFactory.getLogger(TenantClient.class);
 	private static final String TENANT_PATH = "/tenant/";
 
-	public TenantClient(ClientConnection connection) {
+	private TenantClient(ClientConnection connection) {
 		super(connection);
 	}
 

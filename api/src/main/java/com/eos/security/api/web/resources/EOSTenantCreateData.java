@@ -1,7 +1,4 @@
-/**
- * 
- */
-package com.eos.security.web.dto;
+package com.eos.security.api.web.resources;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -10,10 +7,6 @@ import java.util.Map;
 import com.eos.security.api.vo.EOSTenant;
 import com.eos.security.api.vo.EOSUser;
 
-/**
- * @author santos.fabiano
- * 
- */
 public class EOSTenantCreateData implements Serializable {
 
 	private static final long serialVersionUID = -1429913793666655180L;
@@ -91,3 +84,4 @@ public class EOSTenantCreateData implements Serializable {
 	}
 
 }
+

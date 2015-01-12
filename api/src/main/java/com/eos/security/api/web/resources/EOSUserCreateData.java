@@ -1,7 +1,4 @@
-/**
- * 
- */
-package com.eos.security.web.dto;
+package com.eos.security.api.web.resources;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -122,3 +119,4 @@ public class EOSUserCreateData implements Serializable {
 	}
 
 }
+

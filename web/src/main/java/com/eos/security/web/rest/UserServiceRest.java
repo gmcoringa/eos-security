@@ -36,7 +36,7 @@ import com.eos.security.api.service.EOSUserService;
 import com.eos.security.api.vo.EOSGroup;
 import com.eos.security.api.vo.EOSRole;
 import com.eos.security.api.vo.EOSUser;
-import com.eos.security.web.dto.EOSUserCreateData;
+import com.eos.security.api.web.resources.EOSUserCreateData;
 
 /**
  * @author santos.fabiano
@@ -46,26 +46,15 @@ import com.eos.security.web.dto.EOSUserCreateData;
 @Component
 public class UserServiceRest {
 
-	private static EOSUserService svcUser;
-	private static EOSGroupService svcGroup;
-	private static EOSRoleService svcRole;
-
-	@Context
-	private HttpServletResponse response;
+	private final EOSUserService svcUser;
+	private final EOSGroupService svcGroup;
+	private final EOSRoleService svcRole;
 
 	@Autowired
-	private void setUserService(EOSUserService eosUserService) {
-		svcUser = eosUserService;
-	}
-
-	@Autowired
-	private void setGroupService(EOSGroupService eosGroupService) {
-		svcGroup = eosGroupService;
-	}
-
-	@Autowired
-	private void setRoleService(EOSRoleService eosRoleService) {
-		svcRole = eosRoleService;
+	public UserServiceRest(EOSUserService svcUser, EOSGroupService svcGroup, EOSRoleService svcRole) {
+		this.svcUser = svcUser;
+		this.svcGroup = svcGroup;
+		this.svcRole = svcRole;
 	}
 
 	// User
@@ -109,8 +98,8 @@ public class UserServiceRest {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public EOSUser createUser(EOSUserCreateData user) throws EOSDuplicatedEntryException, EOSForbiddenException,
-			EOSUnauthorizedException, EOSValidationException {
+	public EOSUser createUser(EOSUserCreateData user, @Context HttpServletResponse response)
+			throws EOSDuplicatedEntryException, EOSForbiddenException, EOSUnauthorizedException, EOSValidationException {
 		EOSUser ret = svcUser.createUser(user.getUser(), user.getUserData());
 		response.setStatus(Response.Status.CREATED.getStatusCode());
 		return ret;

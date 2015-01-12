@@ -9,10 +9,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import com.eos.security.api.vo.EOSTenant;
-import com.eos.security.api.web.resources.EOSTenantCreateData;
+import com.eos.security.api.web.resources.EOSUserCreateData;
 import com.eos.security.client.rest.ClientConnection;
-import com.eos.security.client.rest.tenant.TenantClient;
+import com.eos.security.client.rest.user.UserClient;
 import com.eos.security.web.EOSApplication;
 import com.eos.security.web.rest.util.TestUtil;
 
@@ -21,7 +20,7 @@ import com.eos.security.web.rest.util.TestUtil;
 @WebAppConfiguration
 @IntegrationTest({ "server.port=8899", "management.port=9988" })
 @Profile("integration")
-public class TenantServiceRestTest {
+public class UserServiceRestTest {
 
 	private static final String SERVER = "http://localhost:8899";
 
@@ -33,14 +32,10 @@ public class TenantServiceRestTest {
 	}
 
 	@Test
-	public void shouldCreateTenant() {
-		TenantClient tenantClient = TenantClient.create(connection);
-		EOSTenant tenant = new EOSTenant().setAlias("createTenant").setName("Create Tenant")
-				.setDescription("Create Tenant Description");
-		EOSTenantCreateData tenantCreateData = new EOSTenantCreateData().setTenant(tenant).setAdminUser(
-				TestUtil.buildUser("create-tenant"));
+	public void shouldCreateUser() {
+		UserClient userClient = UserClient.create(connection);
+		EOSUserCreateData userCreateData = new EOSUserCreateData().setUser(TestUtil.buildUser("create-user"));
 
-		tenantClient.createTenant(tenantCreateData);
+		userClient.createUser(userCreateData);
 	}
-
 }

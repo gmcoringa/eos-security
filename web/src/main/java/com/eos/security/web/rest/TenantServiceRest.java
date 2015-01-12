@@ -26,7 +26,7 @@ import com.eos.common.exception.EOSException;
 import com.eos.common.exception.EOSNotFoundException;
 import com.eos.security.api.service.EOSTenantService;
 import com.eos.security.api.vo.EOSTenant;
-import com.eos.security.web.dto.EOSTenantCreateData;
+import com.eos.security.api.web.resources.EOSTenantCreateData;
 
 /**
  * Tenant rest services.
